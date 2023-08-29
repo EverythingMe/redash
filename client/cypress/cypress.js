@@ -78,8 +78,21 @@ function runCypressCI() {
     }
   }
 
+  const envVars = {
+    COMMIT_INFO_BRANCH: "$(git rev-parse --abbrev-ref HEAD)",
+    COMMIT_INFO_MESSAGE: "$(git show -s --pretty=%B)",
+    COMMIT_INFO_EMAIL: "$(git show -s --pretty=%ae)",
+    COMMIT_INFO_AUTHOR: "$(git show -s --pretty=%an)",
+    COMMIT_INFO_SHA: "$(git show -s --pretty=%H)",
+    COMMIT_INFO_REMOTE: "$(git config --get remote.origin.url)",
+  };
+
+  const envVarsString = Object.entries(envVars)
+    .map(([key, value]) => `${key}=${value}`)
+    .join(" ");
+
   execSync(
-    "COMMIT_INFO_MESSAGE=$(git show -s --format=%s) docker-compose run --name cypress cypress ./node_modules/.bin/percy exec -t 300 -- ./node_modules/.bin/cypress run --record",
+    `${envVarsString} docker-compose run --name cypress cypress ./node_modules/.bin/percy exec -t 300 -- ./node_modules/.bin/cypress run --record`,
     { stdio: "inherit" }
   );
 }

@@ -120,7 +120,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          fetch-depth: 2
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
