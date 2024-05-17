@@ -93,6 +93,7 @@ def refresh_queries():
             query_text = _apply_auto_limit(query_text, query)
             enqueue_query(
                 query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 scheduled_query=query,

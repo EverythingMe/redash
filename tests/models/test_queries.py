@@ -464,7 +464,7 @@ class TestQueryUpdateLatestResult(BaseTestCase):
         super(TestQueryUpdateLatestResult, self).setUp()
         self.data_source = self.factory.data_source
         self.query = "SELECT 1"
-        self.query_hash = gen_query_hash(self.query)
+        self.query_hash = gen_query_hash(self.query, {}, False)
         self.runtime = 123
         self.utcnow = utcnow()
         self.data = {"columns": {}, "rows": []}

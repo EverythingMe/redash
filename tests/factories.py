@@ -126,7 +126,7 @@ query_result_factory = ModelFactory(
     runtime=1,
     retrieved_at=utcnow,
     query_text="SELECT 1",
-    query_hash=gen_query_hash("SELECT 1"),
+    query_hash=gen_query_hash("SELECT 1", {}, False),
     data_source=data_source_factory.create,
     org_id=1,
 )
