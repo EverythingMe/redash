@@ -163,20 +163,17 @@ tests-no-zope = ["attrs[tests-mypy]", "cloudpickle", "hypothesis", "pympler", "p
 
 [[package]]
 name = "authlib"
-version = "0.15.5"
-description = "The ultimate Python library in building OAuth and OpenID Connect servers."
+version = "1.3.1"
+description = "The ultimate Python library in building OAuth and OpenID Connect servers and clients."
 optional = false
-python-versions = "*"
+python-versions = ">=3.8"
 files = [
-    {file = "Authlib-0.15.5-py2.py3-none-any.whl", hash = "sha256:ecf4a7a9f2508c0bb07e93a752dd3c495cfaffc20e864ef0ffc95e3f40d2abaf"},
-    {file = "Authlib-0.15.5.tar.gz", hash = "sha256:b83cf6360c8e92b0e9df0d1f32d675790bcc4e3c03977499b1eed24dcdef4252"},
+    {file = "Authlib-1.3.1-py2.py3-none-any.whl", hash = "sha256:d35800b973099bbadc49b42b256ecb80041ad56b7fe1216a362c7943c088f377"},
+    {file = "authlib-1.3.1.tar.gz", hash = "sha256:7ae843f03c06c5c0debd63c9db91f9fda64fa62a42a77419fa15fbb7e7a58917"},
 ]
 
 [package.dependencies]
 cryptography = "*"
-
-[package.extras]
-client = ["requests"]
 
 [[package]]
 name = "azure-kusto-data"
@@ -5317,4 +5314,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "9ab7b118403a9004893f4d955cf276fe0f231c2c2fa1f327dbffd7c81d2f4dd7"
+content-hash = "536479719a87377950eca42b2aaa89f392eaefbf6f33f818bfc260a6eca0a0aa"
