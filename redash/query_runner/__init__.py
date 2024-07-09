@@ -261,9 +261,10 @@ class BaseQueryRunner:
     def apply_auto_limit(self, query_text, should_apply_auto_limit):
         return query_text
 
-    def gen_query_hash(self, query_text, set_auto_limit=False):
-        query_text = self.apply_auto_limit(query_text, set_auto_limit)
-        return utils.gen_query_hash(query_text)
+    def gen_query_hash(self, query_text, parameters={}, set_auto_limit=False):
+        if not self.supports_auto_limit:
+            set_auto_limit = False
+        return utils.gen_query_hash(query_text, parameters, set_auto_limit)
 
 
 class BaseSQLQueryRunner(BaseQueryRunner):

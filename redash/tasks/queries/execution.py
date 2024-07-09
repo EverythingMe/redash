@@ -27,8 +27,7 @@ def _unlock(query_hash, data_source_id):
     redis_connection.delete(_job_lock_id(query_hash, data_source_id))
 
 
-def enqueue_query(query, data_source, user_id, is_api_key=False, scheduled_query=None, metadata={}):
-    query_hash = gen_query_hash(query)
+def enqueue_query(query, query_hash, data_source, user_id, is_api_key=False, scheduled_query=None, metadata={}):
     logger.info("Inserting job for %s with metadata=%s", query_hash, metadata)
     try_count = 0
     job = None
@@ -99,7 +98,9 @@ def enqueue_query(query, data_source, user_id, is_api_key=False, scheduled_query
                 if not scheduled_query:
                     enqueue_kwargs["result_ttl"] = settings.JOB_EXPIRY_TIME
 
-                job = queue.enqueue(execute_query, query, data_source.id, metadata, **enqueue_kwargs)
+                job = queue.enqueue(
+                    execute_query, query, data_source.id, metadata, query_hash=query_hash, **enqueue_kwargs
+                )
 
                 logger.info("[%s] Created new job: %s", query_hash, job.id)
                 pipe.set(
@@ -146,9 +147,10 @@ def _resolve_user(user_id, is_api_key, query_id):
 
 
 class QueryExecutor:
-    def __init__(self, query, data_source_id, user_id, is_api_key, metadata, is_scheduled_query):
+    def __init__(self, query, query_hash, data_source_id, user_id, is_api_key, metadata, is_scheduled_query):
         self.job = get_current_job()
         self.query = query
+        self.query_hash = query_hash or gen_query_hash(query)
         self.data_source_id = data_source_id
         self.metadata = metadata
         self.data_source = self._load_data_source()
@@ -162,7 +164,6 @@ class QueryExecutor:
 
         # Close DB connection to prevent holding a connection for a long time while the query is executing.
         models.db.session.close()
-        self.query_hash = gen_query_hash(self.query)
         self.is_scheduled_query = is_scheduled_query
         if self.is_scheduled_query:
             # Load existing tracker or create a new one if the job was created before code update:
@@ -271,10 +272,12 @@ def execute_query(
     user_id=None,
     scheduled_query_id=None,
     is_api_key=False,
+    query_hash=None,
 ):
     try:
         return QueryExecutor(
             query,
+            query_hash,
             data_source_id,
             user_id,
             is_api_key,

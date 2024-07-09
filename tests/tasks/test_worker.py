@@ -22,6 +22,7 @@ class TestWorkerMetrics(BaseTestCase):
         with Connection(rq_redis_connection):
             enqueue_query(
                 query.query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 False,
@@ -49,6 +50,7 @@ class TestWorkerMetrics(BaseTestCase):
         with Connection(rq_redis_connection):
             job = enqueue_query(
                 query.query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 False,
@@ -81,6 +83,7 @@ class TestQueueMetrics(BaseTestCase):
         with Connection(rq_redis_connection):
             enqueue_query(
                 query.query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 False,

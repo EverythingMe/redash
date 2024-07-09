@@ -70,7 +70,6 @@ from redash.query_runner import (
 )
 from redash.utils import (
     base_url,
-    gen_query_hash,
     generate_token,
     json_dumps,
     json_loads,
@@ -343,9 +342,7 @@ class QueryResult(db.Model, BelongsToOrgMixin):
         )
 
     @classmethod
-    def get_latest(cls, data_source, query, max_age=0):
-        query_hash = gen_query_hash(query)
-
+    def get_latest(cls, data_source, query_hash, max_age=0):
         if max_age == -1 and settings.QUERY_RESULTS_EXPIRED_TTL_ENABLED:
             max_age = settings.QUERY_RESULTS_EXPIRED_TTL
 
@@ -815,12 +812,11 @@ class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
     def update_query_hash(self):
         should_apply_auto_limit = self.options.get("apply_auto_limit", False) if self.options else False
         query_runner = self.data_source.query_runner if self.data_source else BaseQueryRunner({})
-        query_text = self.query_text
 
         parameters_dict = {p["name"]: p.get("value") for p in self.parameters} if self.options else {}
         if any(parameters_dict):
             try:
-                query_text = self.parameterized.apply(parameters_dict).query
+                self.parameterized.apply(parameters_dict).query
             except InvalidParameterError as e:
                 logging.info(f"Unable to update hash for query {self.id} because of invalid parameters: {str(e)}")
             except QueryDetachedFromDataSourceError as e:
@@ -828,7 +824,7 @@ class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
                     f"Unable to update hash for query {self.id} because of dropdown query {e.query_id} is unattached from datasource"
                 )
 
-        self.query_hash = query_runner.gen_query_hash(query_text, should_apply_auto_limit)
+        self.query_hash = query_runner.gen_query_hash(self.query_text, parameters_dict, should_apply_auto_limit)
 
 
 @listens_for(Query, "before_insert")

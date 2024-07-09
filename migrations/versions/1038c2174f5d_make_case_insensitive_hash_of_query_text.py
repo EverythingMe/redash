@@ -26,7 +26,7 @@ def change_query_hash(conn, table, query_text_to):
             table
             .update()
             .where(table.c.id == record.id)
-            .values(query_hash=gen_query_hash(query_text)))
+            .values(query_hash=gen_query_hash(query_text, {}, False)))
 
 
 def upgrade():

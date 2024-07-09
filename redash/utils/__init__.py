@@ -50,7 +50,7 @@ def slugify(s):
     return re.sub(r"[^a-z0-9_\-]+", "-", s.lower())
 
 
-def gen_query_hash(sql):
+def gen_query_hash(sql, parameters={}, auto_limit=False):
     """Return hash of the given query after stripping all comments, line breaks
     and multiple spaces.
 
@@ -60,6 +60,10 @@ def gen_query_hash(sql):
     """
     sql = COMMENTS_REGEX.sub("", sql)
     sql = "".join(sql.split())
+
+    query_parameters = {"parameters": parameters, "auto_limit": auto_limit}
+    sql += "\n" + json.dumps(query_parameters, sort_keys=True, separators=(",", ":"))
+
     return hashlib.md5(sql.encode("utf-8")).hexdigest()
 
 

@@ -39,6 +39,7 @@ class TestEnqueueTask(BaseTestCase):
         with Connection(rq_redis_connection):
             enqueue_query(
                 query.query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 False,
@@ -47,6 +48,7 @@ class TestEnqueueTask(BaseTestCase):
             )
             enqueue_query(
                 query.query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 False,
@@ -55,6 +57,7 @@ class TestEnqueueTask(BaseTestCase):
             )
             enqueue_query(
                 query.query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 False,
@@ -70,6 +73,7 @@ class TestEnqueueTask(BaseTestCase):
         with Connection(rq_redis_connection):
             enqueue_query(
                 query.query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 False,
@@ -82,6 +86,7 @@ class TestEnqueueTask(BaseTestCase):
 
             enqueue_query(
                 query.query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 False,
@@ -97,6 +102,7 @@ class TestEnqueueTask(BaseTestCase):
         with Connection(rq_redis_connection):
             enqueue_query(
                 query.query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 False,
@@ -114,6 +120,7 @@ class TestEnqueueTask(BaseTestCase):
 
             enqueue_query(
                 query.query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 False,
@@ -130,6 +137,7 @@ class TestEnqueueTask(BaseTestCase):
         with Connection(rq_redis_connection):
             enqueue_query(
                 query.query_text,
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 False,
@@ -141,32 +149,37 @@ class TestEnqueueTask(BaseTestCase):
         self.assertEqual(60, kwargs.get("job_timeout"))
 
     def test_multiple_enqueue_of_different_query(self, enqueue, _):
-        query = self.factory.create_query()
+        query1 = self.factory.create_query(query_text="SELECT 1")
+        query2 = self.factory.create_query(query_text="SELECT 2")
+        query3 = self.factory.create_query(query_text="SELECT 3")
 
         with Connection(rq_redis_connection):
             enqueue_query(
-                query.query_text,
-                query.data_source,
-                query.user_id,
+                query1.query_text,
+                query1.query_hash,
+                query1.data_source,
+                query1.user_id,
                 False,
                 None,
-                {"Username": "Arik", "query_id": query.id},
+                {"Username": "Arik", "query_id": query1.id},
             )
             enqueue_query(
-                query.query_text + "2",
-                query.data_source,
-                query.user_id,
+                query2.query_text,
+                query2.query_hash,
+                query2.data_source,
+                query2.user_id,
                 False,
                 None,
-                {"Username": "Arik", "query_id": query.id},
+                {"Username": "Arik", "query_id": query2.id},
             )
             enqueue_query(
-                query.query_text + "3",
-                query.data_source,
-                query.user_id,
+                query3.query_text,
+                query3.query_hash,
+                query3.data_source,
+                query3.user_id,
                 False,
                 None,
-                {"Username": "Arik", "query_id": query.id},
+                {"Username": "Arik", "query_id": query3.id},
             )
 
         self.assertEqual(3, enqueue.call_count)

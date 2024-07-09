@@ -68,6 +68,8 @@ def run_query(query, parameters, data_source, query_id, should_apply_auto_limit,
 
         return error_response(message)
 
+    query_hash = data_source.query_runner.gen_query_hash(query.text, parameters, should_apply_auto_limit)
+
     try:
         query.apply(parameters)
     except (InvalidParameterError, QueryDetachedFromDataSourceError) as e:
@@ -81,7 +83,7 @@ def run_query(query, parameters, data_source, query_id, should_apply_auto_limit,
     if max_age == 0:
         query_result = None
     else:
-        query_result = models.QueryResult.get_latest(data_source, query_text, max_age)
+        query_result = models.QueryResult.get_latest(data_source, query_hash, max_age)
 
     record_event(
         current_user.org,
@@ -102,6 +104,7 @@ def run_query(query, parameters, data_source, query_id, should_apply_auto_limit,
     else:
         job = enqueue_query(
             query_text,
+            query_hash,
             data_source,
             current_user.id,
             current_user.is_api_user(),

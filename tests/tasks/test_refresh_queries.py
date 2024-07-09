@@ -27,6 +27,7 @@ class TestRefreshQuery(BaseTestCase):
                 [
                     call(
                         query1.query_text + " LIMIT 1000",
+                        query1.query_hash,
                         query1.data_source,
                         query1.user_id,
                         scheduled_query=query1,
@@ -34,6 +35,7 @@ class TestRefreshQuery(BaseTestCase):
                     ),
                     call(
                         "select 42 LIMIT 1000",
+                        query2.query_hash,
                         query2.data_source,
                         query2.user_id,
                         scheduled_query=query2,
@@ -59,6 +61,7 @@ class TestRefreshQuery(BaseTestCase):
                 [
                     call(
                         query1.query_text,
+                        query1.query_hash,
                         query1.data_source,
                         query1.user_id,
                         scheduled_query=query1,
@@ -66,6 +69,7 @@ class TestRefreshQuery(BaseTestCase):
                     ),
                     call(
                         query2.query_text,
+                        query2.query_hash,
                         query2.data_source,
                         query2.user_id,
                         scheduled_query=query2,
@@ -94,6 +98,7 @@ class TestRefreshQuery(BaseTestCase):
                 refresh_queries()
                 add_job_mock.assert_called_with(
                     query.query_text + " LIMIT 1000",
+                    query.query_hash,
                     query.data_source,
                     query.user_id,
                     scheduled_query=query,
@@ -122,6 +127,7 @@ class TestRefreshQuery(BaseTestCase):
                 refresh_queries()
                 add_job_mock.assert_called_with(
                     query.query_text,
+                    query.query_hash,
                     query.data_source,
                     query.user_id,
                     scheduled_query=query,
@@ -152,6 +158,7 @@ class TestRefreshQuery(BaseTestCase):
             refresh_queries()
             add_job_mock.assert_called_with(
                 "select 42 LIMIT 1000",
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 scheduled_query=query,
@@ -184,6 +191,7 @@ class TestRefreshQuery(BaseTestCase):
             refresh_queries()
             add_job_mock.assert_called_with(
                 "select 42",
+                query.query_hash,
                 query.data_source,
                 query.user_id,
                 scheduled_query=query,

@@ -1,7 +1,6 @@
 import unittest
 
 from redash.query_runner import BaseQueryRunner, BaseSQLQueryRunner
-from redash.utils import gen_query_hash
 
 
 class TestBaseSQLQueryRunner(unittest.TestCase):
@@ -118,16 +117,16 @@ class TestBaseSQLQueryRunner(unittest.TestCase):
 
     def test_gen_query_hash_baseSQL(self):
         origin_query_text = "select *"
-        expected_query_text = "select * LIMIT 1000"
-        base_runner = BaseQueryRunner({})
-        self.assertEqual(
-            base_runner.gen_query_hash(expected_query_text), self.query_runner.gen_query_hash(origin_query_text, True)
-        )
+        base_hash = self.query_runner.gen_query_hash(origin_query_text)
+        self.assertEqual(base_hash, self.query_runner.gen_query_hash(origin_query_text, {}, False))
+        self.assertNotEqual(base_hash, self.query_runner.gen_query_hash(origin_query_text, {}, True))
 
     def test_gen_query_hash_NoneSQL(self):
         origin_query_text = "select *"
         base_runner = BaseQueryRunner({})
-        self.assertEqual(gen_query_hash(origin_query_text), base_runner.gen_query_hash(origin_query_text, True))
+        self.assertEqual(
+            base_runner.gen_query_hash(origin_query_text), base_runner.gen_query_hash(origin_query_text, {}, True)
+        )
 
 
 if __name__ == "__main__":
