@@ -7,8 +7,7 @@ def query_time_limit(is_scheduled, user_id, org_id):
 
     if is_scheduled:
         return settings.SCHEDULED_QUERY_TIME_LIMIT
-    else:
-        return settings.ADHOC_QUERY_TIME_LIMIT
+    return settings.ADHOC_QUERY_TIME_LIMIT
 
 
 def periodic_jobs():

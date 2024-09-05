@@ -39,13 +39,12 @@ from sqlalchemy.sql.expression import asc, desc
 def get_query_descriptor(query, entity, attr):
     if attr in query_labels(query):
         return attr
-    else:
-        entity = get_query_entity_by_alias(query, entity)
-        if entity:
-            descriptor = get_descriptor(entity, attr)
-            if hasattr(descriptor, "property") and isinstance(descriptor.property, sa.orm.RelationshipProperty):
-                return
-            return descriptor
+    entity = get_query_entity_by_alias(query, entity)
+    if entity:
+        descriptor = get_descriptor(entity, attr)
+        if hasattr(descriptor, "property") and isinstance(descriptor.property, sa.orm.RelationshipProperty):
+            return
+        return descriptor
 
 
 def query_labels(query):
@@ -110,9 +109,9 @@ def is_labeled_query(expr):
 def get_query_entity(expr):
     if isinstance(expr, sa.orm.attributes.InstrumentedAttribute):
         return expr.parent.class_
-    elif isinstance(expr, sa.Column):
+    if isinstance(expr, sa.Column):
         return expr.table
-    elif isinstance(expr, AliasedInsp):
+    if isinstance(expr, AliasedInsp):
         return expr.entity
     return expr
 
@@ -165,8 +164,7 @@ def get_mapper(mixed):
 def get_polymorphic_mappers(mixed):
     if isinstance(mixed, AliasedInsp):
         return mixed.with_polymorphic_mappers
-    else:
-        return mixed.polymorphic_map.values()
+    return mixed.polymorphic_map.values()
 
 
 def get_descriptor(entity, attr):
@@ -204,13 +202,12 @@ def get_all_descriptors(expr):
         polymorphic_mappers = get_polymorphic_mappers(insp)
     except sa.exc.NoInspectionAvailable:
         return get_mapper(expr).all_orm_descriptors
-    else:
-        attrs = dict(get_mapper(expr).all_orm_descriptors)
-        for submapper in polymorphic_mappers:
-            for key, descriptor in submapper.all_orm_descriptors.items():
-                if key not in attrs:
-                    attrs[key] = descriptor
-        return attrs
+    attrs = dict(get_mapper(expr).all_orm_descriptors)
+    for submapper in polymorphic_mappers:
+        for key, descriptor in submapper.all_orm_descriptors.items():
+            if key not in attrs:
+                attrs[key] = descriptor
+    return attrs
 
 
 class QuerySorterException(Exception):

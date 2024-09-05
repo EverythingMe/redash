@@ -25,9 +25,8 @@ def _convert_format(fmt):
 def _convert_bool(value):
     if value is True:
         return "true"
-    elif value is False:
+    if value is False:
         return "false"
-
     return value
 
 
@@ -76,8 +75,7 @@ def serialize_query_result(query_result, is_api_user):
     if is_api_user:
         publicly_needed_keys = ["data", "retrieved_at"]
         return project(query_result.to_dict(), publicly_needed_keys)
-    else:
-        return query_result.to_dict()
+    return query_result.to_dict()
 
 
 def serialize_query_result_to_dsv(query_result, delimiter):

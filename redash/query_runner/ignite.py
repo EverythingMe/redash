@@ -101,8 +101,7 @@ class Ignite(BaseSQLQueryRunner):
         # if it's a datetime, just return the milliseconds
         if type(col) is tuple and len(col) == 2 and type(col[0]) is datetime.datetime and isinstance(col[1], int):
             return col[0]
-        else:
-            return col
+        return col
 
     def normalise_row(self, row):
         return [self.normalise_column(col) for col in row]

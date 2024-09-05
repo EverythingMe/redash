@@ -53,11 +53,9 @@ def login(org_slug=None):
             )
             if user is None:
                 return logout_and_redirect_to_index()
-
             return redirect(next_path or url_for("redash.index"))
-        else:
-            flash("Incorrect credentials.")
-
+        flash("Incorrect credentials.")
+    
     return render_template(
         "login.html",
         org_slug=org_slug,

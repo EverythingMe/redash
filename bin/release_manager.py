@@ -40,7 +40,7 @@ def get_rc_release(version):
 
     if response.status_code == 404:
         return None
-    elif response.status_code == 200:
+    if response.status_code == 200:
         return response.json()
 
     raise exception_from_error("Unknown error while looking RC release: ", response)

@@ -209,8 +209,7 @@ class User(TimestampMixin, db.Model, BelongsToOrgMixin, UserMixin, PermissionsCh
     def pending(cls, base_query, pending):
         if pending:
             return base_query.filter(cls.is_invitation_pending.is_(True))
-        else:
-            return base_query.filter(cls.is_invitation_pending.isnot(True))  # check for both `false`/`null`
+        return base_query.filter(cls.is_invitation_pending.isnot(True))  # check for both `false`/`null`
 
     @classmethod
     def find_by_email(cls, email):

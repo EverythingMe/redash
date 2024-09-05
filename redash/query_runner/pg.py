@@ -427,8 +427,7 @@ class RedshiftIAM(Redshift):
         if self.configuration.get("rolename"):
             if not self.configuration.get("aws_access_key_id") or not self.configuration.get("aws_secret_access_key"):
                 return "ASSUME_ROLE_NO_KEYS"
-            else:
-                return "ASSUME_ROLE_KEYS"
+            return "ASSUME_ROLE_KEYS"
         elif self.configuration.get("aws_access_key_id") and self.configuration.get("aws_secret_access_key"):
             return "KEYS"
         elif not self.configuration.get("password"):

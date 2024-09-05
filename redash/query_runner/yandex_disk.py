@@ -134,7 +134,7 @@ class YandexDisk(BaseSQLQueryRunner):
         if file_extension not in EXTENSIONS_READERS:
             error = f"Unsupported file extension: {file_extension}"
             return data, error
-        elif file_extension in ("xls", "xlsx"):
+        if file_extension in ("xls", "xlsx"):
             read_params["sheet_name"] = params.get("sheet_name", 0)
             if read_params["sheet_name"] is None:
                 is_multiple_sheets = True

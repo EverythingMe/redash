@@ -100,8 +100,7 @@ class HardLimitingWorker(BaseWorker):
         if job_has_time_limit:
             seconds_under_monitor = (utcnow() - self.monitor_started).seconds
             return seconds_under_monitor > job.timeout + self.grace_period
-        else:
-            return False
+        return False
 
     def enforce_hard_limit(self, job):
         self.log.warning(

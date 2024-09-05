@@ -45,11 +45,11 @@ def transform_cell(field_type, cell_value):
         return None
     if field_type == "INTEGER":
         return int(cell_value)
-    elif field_type == "FLOAT":
+    if field_type == "FLOAT":
         return float(cell_value)
-    elif field_type == "BOOLEAN":
+    if field_type == "BOOLEAN":
         return cell_value.lower() == "true"
-    elif field_type == "TIMESTAMP":
+    if field_type == "TIMESTAMP":
         return datetime.datetime.fromtimestamp(float(cell_value))
     return cell_value
 

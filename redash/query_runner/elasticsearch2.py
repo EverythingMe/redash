@@ -212,11 +212,10 @@ class ElasticSearch2(BaseHTTPQueryRunner):
                 error = error[:10240] + "... continues"
 
             raise Exception(error)
-        elif "aggregations" in raw_result:
+        if "aggregations" in raw_result:
             for key, data in raw_result["aggregations"].items():
                 collect_aggregations(result_rows, key, data, None, 0)
-
-        elif "hits" in raw_result and "hits" in raw_result["hits"]:
+        if "hits" in raw_result and "hits" in raw_result["hits"]:
             for h in raw_result["hits"]["hits"]:
                 row = {}
 

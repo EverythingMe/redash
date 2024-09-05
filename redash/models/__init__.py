@@ -1417,9 +1417,8 @@ class AlertSubscription(TimestampMixin, db.Model):
         return AlertSubscription.query.join(User).filter(AlertSubscription.alert_id == alert_id)
 
     def notify(self, alert, query, user, new_state, app, host, metadata):
-        if self.destination:
-            return self.destination.notify(alert, query, user, new_state, app, host, metadata)
-        else:
+            if self.destination:
+                return self.destination.notify(alert, query, user, new_state, app, host, metadata)
             # User email subscription, so create an email destination object
             config = {"addresses": self.user.email}
             schema = get_configuration_schema_for_destination_type("email")

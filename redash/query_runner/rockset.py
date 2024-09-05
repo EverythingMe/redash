@@ -13,11 +13,11 @@ from redash.query_runner import (
 def _get_type(value):
     if isinstance(value, int):
         return TYPE_INTEGER
-    elif isinstance(value, float):
+    if isinstance(value, float):
         return TYPE_FLOAT
-    elif isinstance(value, bool):
+    if isinstance(value, bool):
         return TYPE_BOOLEAN
-    elif isinstance(value, str):
+    if isinstance(value, str):
         return TYPE_STRING
     return TYPE_STRING
 
@@ -31,16 +31,15 @@ class RocksetAPI:
         self.vi_id = vi_id
 
     def _request(self, endpoint, method="GET", body=None):
-        headers = {"Authorization": "ApiKey {}".format(self.api_key), "User-Agent": "rest:redash/1.0"}
-        url = "{}/v1/orgs/self/{}".format(self.api_server, endpoint)
+            headers = {"Authorization": "ApiKey {}".format(self.api_key), "User-Agent": "rest:redash/1.0"}
+            url = "{}/v1/orgs/self/{}".format(self.api_server, endpoint)
 
-        if method == "GET":
-            r = requests.get(url, headers=headers)
-            return r.json()
-        elif method == "POST":
-            r = requests.post(url, headers=headers, json=body)
-            return r.json()
-        else:
+            if method == "GET":
+                r = requests.get(url, headers=headers)
+                return r.json()
+            if method == "POST":
+                r = requests.post(url, headers=headers, json=body)
+                return r.json()
             raise "Unknown method: {}".format(method)
 
     def list_workspaces(self):

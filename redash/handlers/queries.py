@@ -256,13 +256,12 @@ class QueryArchiveResource(BaseQueryListResource):
                 include_archived=True,
                 multi_byte_search=current_org.get_setting("multi_byte_search_enabled"),
             )
-        else:
-            return models.Query.all_queries(
-                self.current_user.group_ids,
-                self.current_user.id,
-                include_drafts=False,
-                include_archived=True,
-            )
+        return models.Query.all_queries(
+            self.current_user.group_ids,
+            self.current_user.id,
+            include_drafts=False,
+            include_archived=True,
+        )
 
 
 class MyQueriesResource(BaseResource):

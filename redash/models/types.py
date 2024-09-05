@@ -53,11 +53,9 @@ class MutableDict(Mutable, dict):
         if not isinstance(value, MutableDict):
             if isinstance(value, dict):
                 return MutableDict(value)
-
             # this call will raise ValueError
             return Mutable.coerce(key, value)
-        else:
-            return value
+        return value
 
     def __setitem__(self, key, value):
         "Detect dictionary set events and emit change events."
@@ -87,8 +85,7 @@ class MutableList(Mutable, list):
             if isinstance(value, list):
                 return MutableList(value)
             return Mutable.coerce(key, value)
-        else:
-            return value
+        return value
 
 
 class json_cast_property(index_property):

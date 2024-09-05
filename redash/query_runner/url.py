@@ -31,8 +31,7 @@ class Url(BaseHTTPQueryRunner):
 
         if json_data:
             return json_data, None
-        else:
-            return None, "Got empty response from '{}'.".format(url)
+        return None, "Got empty response from '{}'.".format(url)
 
 
 register(Url)

@@ -139,12 +139,8 @@ def _resolve_user(user_id, is_api_key, query_id):
                 q = models.Query.get_by_id(query_id)
             else:
                 q = models.Query.by_api_key(api_key)
-
             return models.ApiUser(api_key, q.org, q.groups)
-        else:
-            return models.User.get_by_id(user_id)
-    else:
-        return None
+    return models.User.get_by_id(user_id) if not is_api_key else None
 
 
 def _get_size_iterative(dict_obj):

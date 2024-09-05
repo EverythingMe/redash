@@ -178,7 +178,7 @@ def login(org_slug=None):
     # noinspection PyComparisonWithNone
     if current_org == None and not settings.MULTI_ORG:  # noqa: E711
         return redirect("/setup")
-    elif current_org == None:  # noqa: E711
+    if current_org == None:  # noqa: E711
         return redirect("/")
 
     index_url = url_for("redash.index", org_slug=org_slug)
@@ -195,11 +195,10 @@ def login(org_slug=None):
                 remember = "remember" in request.form
                 login_user(user, remember=remember)
                 return redirect(next_path)
-            else:
-                flash("Wrong email or password.")
+            flash("Wrong email or password.")
         except NoResultFound:
             flash("Wrong email or password.")
-    elif request.method == "POST" and not current_org.get_setting("auth_password_login_enabled"):
+    if request.method == "POST" and not current_org.get_setting("auth_password_login_enabled"):
         flash("Password login is not enabled for your organization.")
 
     google_auth_url = get_google_auth_url(next_path)

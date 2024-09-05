@@ -58,14 +58,13 @@ class Databend(BaseQueryRunner):
             c = f.group(1)
         if c.startswith("int") or c.startswith("uint"):
             return TYPE_INTEGER
-        elif c.startswith("float"):
+        if c.startswith("float"):
             return TYPE_FLOAT
-        elif c == "datetime":
+        if c == "datetime":
             return TYPE_DATETIME
-        elif c == "date":
+        if c == "date":
             return TYPE_DATE
-        else:
-            return TYPE_STRING
+        return TYPE_STRING
 
     def run_query(self, query, user):
         host = self.configuration.get("host") or "localhost"

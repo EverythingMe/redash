@@ -51,8 +51,7 @@ class Oracle(BaseSQLQueryRunner):
             if scale > 0:
                 return TYPE_FLOAT
             return TYPE_INTEGER
-        else:
-            return TYPES_MAP.get(col_type, None)
+        return TYPES_MAP.get(col_type, None)
 
     @classmethod
     def enabled(cls):

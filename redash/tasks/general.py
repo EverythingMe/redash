@@ -44,10 +44,9 @@ def test_connection(data_source_id):
     try:
         data_source = models.DataSource.get_by_id(data_source_id)
         data_source.query_runner.test_connection()
+        return True
     except Exception as e:
         return e
-    else:
-        return True
 
 
 @job("schemas", queue_class=Queue, at_front=True, timeout=300, ttl=90)

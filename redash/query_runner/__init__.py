@@ -139,15 +139,14 @@ class BaseQueryRunner:
 
     @property
     def host(self):
-        """Returns this query runner's configured host.
-        This is used primarily for temporarily swapping endpoints when using SSH tunnels to connect to a data source.
+            """Returns this query runner's configured host.
+            This is used primarily for temporarily swapping endpoints when using SSH tunnels to connect to a data source.
 
-        `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port`
-        configuration values. If your query runner uses a different schema (e.g. a web address), you should override this function.
-        """
-        if "host" in self.configuration:
-            return self.configuration["host"]
-        else:
+            `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port`
+            configuration values. If your query runner uses a different schema (e.g. a web address), you should override this function.
+            """
+            if "host" in self.configuration:
+                return self.configuration["host"]
             raise NotImplementedError()
 
     @host.setter
@@ -165,15 +164,14 @@ class BaseQueryRunner:
 
     @property
     def port(self):
-        """Returns this query runner's configured port.
-        This is used primarily for temporarily swapping endpoints when using SSH tunnels to connect to a data source.
+            """Returns this query runner's configured port.
+            This is used primarily for temporarily swapping endpoints when using SSH tunnels to connect to a data source.
 
-        `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port`
-        configuration values. If your query runner uses a different schema (e.g. a web address), you should override this function.
-        """
-        if "port" in self.configuration:
-            return self.configuration["port"]
-        else:
+            `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port`
+            configuration values. If your query runner uses a different schema (e.g. a web address), you should override this function.
+            """
+            if "port" in self.configuration:
+                return self.configuration["port"]
             raise NotImplementedError()
 
     @port.setter
@@ -449,9 +447,9 @@ def import_query_runners(query_runner_imports):
 def guess_type(value):
     if isinstance(value, bool):
         return TYPE_BOOLEAN
-    elif isinstance(value, int):
+    if isinstance(value, int):
         return TYPE_INTEGER
-    elif isinstance(value, float):
+    if isinstance(value, float):
         return TYPE_FLOAT
 
     return guess_type_from_string(value)

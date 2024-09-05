@@ -14,16 +14,15 @@ from redash.query_runner import (
 def _exasol_type_mapper(val, data_type):
     if val is None:
         return None
-    elif data_type["type"] == "DECIMAL":
+    if data_type["type"] == "DECIMAL":
         if data_type["scale"] == 0 and data_type["precision"] < 16:
             return int(val)
-        elif data_type["scale"] == 0 and data_type["precision"] >= 16:
+        if data_type["scale"] == 0 and data_type["precision"] >= 16:
             return val
-        else:
-            return float(val)
-    elif data_type["type"] == "DATE":
+        return float(val)
+    if data_type["type"] == "DATE":
         return datetime.date(int(val[0:4]), int(val[5:7]), int(val[8:10]))
-    elif data_type["type"] == "TIMESTAMP":
+    if data_type["type"] == "TIMESTAMP":
         return datetime.datetime(
             int(val[0:4]),
             int(val[5:7]),
@@ -33,24 +32,21 @@ def _exasol_type_mapper(val, data_type):
             int(val[17:19]),  # hour, minute, second
             int(val[20:26].ljust(6, "0")) if len(val) > 20 else 0,
         )  # microseconds (if available)
-    else:
-        return val
+    return val
 
 
 def _type_mapper(data_type):
     if data_type["type"] == "DECIMAL":
         if data_type["scale"] == 0 and data_type["precision"] < 16:
             return TYPE_INTEGER
-        elif data_type["scale"] == 0 and data_type["precision"] >= 16:
+        if data_type["scale"] == 0 and data_type["precision"] >= 16:
             return TYPE_STRING
-        else:
-            return TYPE_FLOAT
-    elif data_type["type"] == "DATE":
+        return TYPE_FLOAT
+    if data_type["type"] == "DATE":
         return TYPE_DATE
-    elif data_type["type"] == "TIMESTAMP":
+    if data_type["type"] == "TIMESTAMP":
         return TYPE_DATETIME
-    else:
-        return TYPE_STRING
+    return TYPE_STRING
 
 
 try:

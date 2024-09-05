@@ -21,8 +21,7 @@ def json_string_substitute(j, substitutions):
         substituted = string_template.safe_substitute(substitutions)
         out_str = substituted.replace("${", "{")
         return out_str
-    else:
-        return j
+    return j
 
 
 class MicrosoftTeamsWebhook(BaseDestination):

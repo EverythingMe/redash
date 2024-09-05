@@ -109,12 +109,11 @@ def fix_column_name(name):
 def flatten(value):
     if isinstance(value, (list, dict)):
         return json_dumps(value)
-    elif isinstance(value, decimal.Decimal):
+    if isinstance(value, decimal.Decimal):
         return float(value)
-    elif isinstance(value, datetime.timedelta):
+    if isinstance(value, datetime.timedelta):
         return str(value)
-    else:
-        return value
+    return value
 
 
 def create_table(connection, table_name, query_results):

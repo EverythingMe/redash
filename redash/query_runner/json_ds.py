@@ -238,7 +238,7 @@ class RequestPagination:
 
         if pagination["type"] == "url":
             return UrlPagination(pagination)
-        elif pagination["type"] == "token":
+        if pagination["type"] == "token":
             return TokenPagination(pagination)
 
         raise QueryParseError("Unknown 'pagination.type' {}".format(pagination["type"]))

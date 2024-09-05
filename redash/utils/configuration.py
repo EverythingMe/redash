@@ -15,11 +15,9 @@ class ConfigurationContainer(Mutable):
         if not isinstance(value, ConfigurationContainer):
             if isinstance(value, dict):
                 return ConfigurationContainer(value)
-
             # this call will raise ValueError
             return Mutable.coerce(key, value)
-        else:
-            return value
+        return value
 
     def __init__(self, config, schema=None):
         self._config = config

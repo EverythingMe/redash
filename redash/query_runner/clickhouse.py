@@ -149,14 +149,13 @@ class ClickHouse(BaseSQLQueryRunner):
             c = f.group(1)
         if c.startswith("int") or c.startswith("uint"):
             return TYPE_INTEGER
-        elif c.startswith("float"):
+        if c.startswith("float"):
             return TYPE_FLOAT
-        elif c == "datetime":
+        if c == "datetime":
             return TYPE_DATETIME
-        elif c == "date":
+        if c == "date":
             return TYPE_DATE
-        else:
-            return TYPE_STRING
+        return TYPE_STRING
 
     def _clickhouse_query(self, query, session_id=None, session_check=None):
         logger.debug(f"{self.name()} is about to execute query: %s", query)

@@ -30,9 +30,8 @@ def get_public_key_from_net(url):
 
         get_public_keys.key_cache[url] = public_keys
         return public_keys
-    else:
-        get_public_keys.key_cache[url] = data
-        return data
+    get_public_keys.key_cache[url] = data
+    return data
 
 
 def get_public_keys(url):

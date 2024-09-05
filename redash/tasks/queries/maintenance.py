@@ -33,13 +33,13 @@ def _should_refresh_query(query):
     if settings.FEATURE_DISABLE_REFRESH_QUERIES:
         logger.info("Disabled refresh queries.")
         return False
-    elif query.org.is_disabled:
+    if query.org.is_disabled:
         logger.debug("Skipping refresh of %s because org is disabled.", query.id)
         return False
-    elif query.data_source is None:
+    if query.data_source is None:
         logger.debug("Skipping refresh of %s because the datasource is none.", query.id)
         return False
-    elif query.data_source.paused:
+    if query.data_source.paused:
         logger.debug(
             "Skipping refresh of %s because datasource - %s is paused (%s).",
             query.id,
@@ -47,8 +47,7 @@ def _should_refresh_query(query):
             query.data_source.pause_reason,
         )
         return False
-    else:
-        return True
+    return True
 
 
 def _apply_default_parameters(query):

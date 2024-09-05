@@ -169,12 +169,11 @@ class Athena(BaseQueryRunner):
                 "aws_session_token": creds["Credentials"]["SessionToken"],
                 "region_name": self.configuration["region"],
             }
-        else:
-            return {
-                "aws_access_key_id": self.configuration.get("aws_access_key", None),
-                "aws_secret_access_key": self.configuration.get("aws_secret_key", None),
-                "region_name": self.configuration["region"],
-            }
+        return {
+            "aws_access_key_id": self.configuration.get("aws_access_key", None),
+            "aws_secret_access_key": self.configuration.get("aws_secret_key", None),
+            "region_name": self.configuration["region"],
+        }
 
     def __get_schema_from_glue(self, catalog_id=""):
         client = boto3.client("glue", **self._get_iam_credentials())

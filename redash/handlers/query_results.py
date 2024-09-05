@@ -65,7 +65,6 @@ def run_query(query, parameters, data_source, query_id, should_apply_auto_limit,
             message = "{} is paused ({}). Please try later.".format(data_source.name, data_source.pause_reason)
         else:
             message = "{} is paused. Please try later.".format(data_source.name)
-
         return error_response(message)
 
     try:
@@ -99,18 +98,17 @@ def run_query(query, parameters, data_source, query_id, should_apply_auto_limit,
 
     if query_result:
         return {"query_result": serialize_query_result(query_result, current_user.is_api_user())}
-    else:
-        job = enqueue_query(
-            query_text,
-            data_source,
-            current_user.id,
-            current_user.is_api_user(),
-            metadata={
-                "Username": current_user.get_actual_user(),
-                "query_id": query_id,
-            },
-        )
-        return serialize_job(job)
+    job = enqueue_query(
+        query_text,
+        data_source,
+        current_user.id,
+        current_user.is_api_user(),
+        metadata={
+            "Username": current_user.get_actual_user(),
+            "query_id": query_id,
+        },
+    )
+    return serialize_job(job)
 
 
 def get_download_filename(query_result, query, filetype):
@@ -275,14 +273,11 @@ class QueryResultResource(BaseResource):
                 should_apply_auto_limit,
                 max_age,
             )
-        else:
-            if not query.parameterized.is_safe:
-                if current_user.is_api_user():
-                    return error_messages["unsafe_when_shared"]
-                else:
-                    return error_messages["unsafe_on_view_only"]
-            else:
-                return error_messages["no_permission"]
+        if not query.parameterized.is_safe:
+            if current_user.is_api_user():
+                return error_messages["unsafe_when_shared"]
+            return error_messages["unsafe_on_view_only"]
+        return error_messages["no_permission"]
 
     @require_any_of_permission(("view_query", "execute_query"))
     def get(self, query_id=None, query_result_id=None, filetype="json"):
@@ -371,8 +366,7 @@ class QueryResultResource(BaseResource):
 
             return response
 
-        else:
-            abort(404, message="No cached result found for this query.")
+        abort(404, message="No cached result found for this query.")
 
     @staticmethod
     def make_json_response(query_result):
