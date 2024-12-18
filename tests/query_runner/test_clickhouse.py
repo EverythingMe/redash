@@ -104,10 +104,15 @@ class TestClickHouse(TestCase):
         self.assertEqual(
             kwargs["params"],
             {
-                "user": "default",
-                "password": "",
                 "database": "system",
                 "default_format": "JSON",
+            },
+        )
+        self.assertEqual(
+            kwargs["headers"],
+            {
+                "x-clickhouse-user": "default",
+                "x-clickhouse-key": "",
             },
         )
         self.assertEqual(kwargs["timeout"], 60)
