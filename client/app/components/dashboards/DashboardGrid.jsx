@@ -3,7 +3,12 @@ import PropTypes from "prop-types";
 import { chain, cloneDeep, find } from "lodash";
 import cx from "classnames";
 import { Responsive, WidthProvider } from "react-grid-layout";
-import { VisualizationWidget, TextboxWidget, RestrictedWidget } from "@/components/dashboards/dashboard-widget";
+import {
+  VisualizationWidget,
+  TextboxWidget,
+  IframeboxWidget,
+  RestrictedWidget,
+} from "@/components/dashboards/dashboard-widget";
 import { FiltersType } from "@/components/Filters";
 import cfg from "@/config/dashboard-grid-options";
 import AutoHeightController from "./AutoHeightController";
@@ -71,6 +76,9 @@ const DashboardWidget = React.memo(
     }
     if (type === WidgetTypeEnum.TEXTBOX) {
       return <TextboxWidget widget={widget} canEdit={canEdit} isPublic={isPublic} onDelete={onDelete} />;
+    }
+    if (type === WidgetTypeEnum.IFRAMEBOX) {
+      return <IframeboxWidget widget={widget} canEdit={canEdit} isPublic={isPublic} onDelete={onDelete} />;
     }
     return <RestrictedWidget widget={widget} />;
   },

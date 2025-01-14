@@ -24,6 +24,7 @@ import { Query } from "./query";
 
 export const WidgetTypeEnum = {
   TEXTBOX: "textbox",
+  IFRAMEBOX: "iframebox",
   VISUALIZATION: "visualization",
   RESTRICTED: "restricted",
 };
@@ -118,6 +119,8 @@ class Widget {
       return WidgetTypeEnum.VISUALIZATION;
     } else if (this.restricted) {
       return WidgetTypeEnum.RESTRICTED;
+    } else if (this.options.isIframe) {
+      return WidgetTypeEnum.IFRAMEBOX;
     }
     return WidgetTypeEnum.TEXTBOX;
   }

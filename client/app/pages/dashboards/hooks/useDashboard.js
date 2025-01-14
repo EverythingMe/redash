@@ -9,6 +9,7 @@ import recordEvent from "@/services/recordEvent";
 import { QueryResultError } from "@/services/query";
 import AddWidgetDialog from "@/components/dashboards/AddWidgetDialog";
 import TextboxDialog from "@/components/dashboards/TextboxDialog";
+import IframeboxDialog from "@/components/dashboards/IframeboxDialog";
 import PermissionsEditorDialog from "@/components/PermissionsEditorDialog";
 import { editableMappingsToParameterMappings, synchronizeWidgetTitles } from "@/components/ParameterMappingInput";
 import ShareDashboardDialog from "../components/ShareDashboardDialog";
@@ -180,6 +181,19 @@ function useDashboard(dashboardData) {
     );
   }, [dashboard]);
 
+  const showAddIframeboxDialog = useCallback(() => {
+    IframeboxDialog.showModal({
+      isNew: true,
+    }).onClose((text, title) =>
+      dashboard
+        .addWidget(text, {
+          title,
+          isIframe: true,
+        })
+        .then(() => setDashboard(currentDashboard => extend({}, currentDashboard)))
+    );
+  }, [dashboard]);
+
   const showAddWidgetDialog = useCallback(() => {
     AddWidgetDialog.showModal({
       dashboard,
@@ -244,6 +258,7 @@ function useDashboard(dashboardData) {
     toggleFullscreen,
     showShareDashboardDialog,
     showAddTextboxDialog,
+    showAddIframeboxDialog,
     showAddWidgetDialog,
     managePermissions,
     isDuplicating,
