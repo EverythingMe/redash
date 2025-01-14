@@ -58,6 +58,15 @@ function visualizationWidgetMenuOptions({ widget, canEditDashboard, onParameters
         "Download as Excel File"
       )}
     </Menu.Item>,
+    <Menu.Item key="download_json" disabled={isQueryResultEmpty}>
+      {!isQueryResultEmpty ? (
+        <Link href={downloadLink("json")} download={downloadName("json")} target="_self">
+          Download as JSON File
+        </Link>
+      ) : (
+        "Download as JSON File"
+      )}
+    </Menu.Item>,
     (canViewQuery || canEditParameters) && <Menu.Divider key="divider" />,
     canViewQuery && (
       <Menu.Item key="view_query">
