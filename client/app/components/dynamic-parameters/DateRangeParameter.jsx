@@ -62,6 +62,14 @@ const DYNAMIC_DATE_OPTIONS = [
         .format("YYYY"),
   },
   {
+    name: "Last 2 days",
+    value: getDynamicDateRangeFromString("d_last_2_days"),
+    label: () =>
+      getDynamicDateRangeFromString("d_last_2_days")
+        .value()[0]
+        .format("MMM D") + " - Today",
+  },
+  {
     name: "Last 7 days",
     value: getDynamicDateRangeFromString("d_last_7_days"),
     label: () =>
@@ -109,6 +117,46 @@ const DYNAMIC_DATE_OPTIONS = [
 ];
 
 const DYNAMIC_DATETIME_OPTIONS = [
+  {
+    name: "Last 5 minutes",
+    value: getDynamicDateRangeFromString("d_last_5_minutes"),
+    label: null
+  },
+  {
+    name: "Last 15 minutes",
+    value: getDynamicDateRangeFromString("d_last_15_minutes"),
+    label: null
+  },
+  {
+    name: "Last 30 minutes",
+    value: getDynamicDateRangeFromString("d_last_30_minutes"),
+    label: null
+  },
+  {
+    name: "Last hour",
+    value: getDynamicDateRangeFromString("d_last_hour"),
+    label: null
+  },
+  {
+    name: "Last 3 hours",
+    value: getDynamicDateRangeFromString("d_last_3_hours"),
+    label: null
+  },
+  {
+    name: "Last 6 hours",
+    value: getDynamicDateRangeFromString("d_last_6_hours"),
+    label: null
+  },
+  {
+    name: "Last 12 hours",
+    value: getDynamicDateRangeFromString("d_last_12_hours"),
+    label: null
+  },
+  {
+    name: "Last 24 hours",
+    value: getDynamicDateRangeFromString("d_last_24_hours"),
+    label: null
+  },
   {
     name: "Today",
     value: getDynamicDateRangeFromString("d_today"),

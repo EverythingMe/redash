@@ -80,17 +80,51 @@ const DYNAMIC_DATE_RANGES = {
         .endOf("year"),
     ],
   },
+  last_5_minutes: {
+    name: "Last 5 minutes",
+    value: untilNow(() => moment().subtract(5, "minutes")),
+  },
+  last_15_minutes: {
+    name: "Last 15 minutes",
+    value: untilNow(() => moment().subtract(15, "minutes")),
+  },
+  last_30_minutes: {
+    name: "Last 30 minutes",
+    value: untilNow(() => moment().subtract(30, "minutes")),
+  },
   last_hour: {
     name: "Last hour",
     value: untilNow(() => moment().subtract(1, "hour")),
+  },
+  last_3_hours: {
+    name: "Last 3 hours",
+    value: untilNow(() => moment().subtract(3, "hour")),
+  },
+  last_6_hours: {
+    name: "Last 6 hours",
+    value: untilNow(() => moment().subtract(6, "hour")),
   },
   last_8_hours: {
     name: "Last 8 hours",
     value: untilNow(() => moment().subtract(8, "hour")),
   },
+  last_12_hours: {
+    name: "Last 12 hours",
+    value: untilNow(() => moment().subtract(12, "hour")),
+  },
   last_24_hours: {
     name: "Last 24 hours",
     value: untilNow(() => moment().subtract(24, "hour")),
+  },
+  last_2_days: {
+    name: "Last 2 days",
+    value: untilNow(
+      () =>
+        moment()
+          .subtract(2, "days")
+          .startOf("day"),
+      () => moment().endOf("day")
+    ),
   },
   last_7_days: {
     name: "Last 7 days",
