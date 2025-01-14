@@ -101,18 +101,20 @@ class WorksheetNotFoundByTitleError(Exception):
 def parse_query(query):
     values = query.split("|")
     key = values[0]  # key of the spreadsheet
-    worksheet_num_or_title = 0  # A default value for when a number of inputs is invalid
+    worksheet_pointer = ' 1'  # A default value for when a number of inputs is invalid
     if len(values) == 2:
         s = values[1].strip()
         if len(s) > 0:
             if re.match(r"^\"(.*?)\"$", s):
                 # A string quoted by " means a title of worksheet
-                worksheet_num_or_title = s[1:-1]
+                worksheet_pointer = s[1:-1]
             else:
-                # if spreadsheet contains more than one worksheet - this is the number of it
-                worksheet_num_or_title = int(s)
-
-    return key, worksheet_num_or_title
+                if re.match(r"^\d+$", s.split()[0]):
+                    # index is initialized with a space to differentiate from the title of worksheet
+                    worksheet_pointer = ' '+s.split()[0]
+                else:
+                    worksheet_pointer = s.split()[0]
+    return key, worksheet_pointer
 
 
 def parse_worksheet(worksheet):
@@ -132,17 +134,17 @@ def parse_worksheet(worksheet):
     return data
 
 
-def parse_spreadsheet(spreadsheet, worksheet_num_or_title):
+def parse_spreadsheet(spreadsheet, worksheet_pointer):
     worksheet = None
-    if isinstance(worksheet_num_or_title, int):
-        worksheet = spreadsheet.get_worksheet_by_index(worksheet_num_or_title)
+    if worksheet_pointer[0] == ' ':  # An index of worksheet
+        worksheet = spreadsheet.get_worksheet_by_index(int(worksheet_pointer))
         if worksheet is None:
             worksheet_count = len(spreadsheet.worksheets())
-            raise WorksheetNotFoundError(worksheet_num_or_title, worksheet_count)
-    elif isinstance(worksheet_num_or_title, str):
-        worksheet = spreadsheet.get_worksheet_by_title(worksheet_num_or_title)
+            raise WorksheetNotFoundError(int(worksheet_pointer), worksheet_count)
+    elif worksheet_pointer[0] == ' ':  # A title of worksheet
+        worksheet = spreadsheet.get_worksheet_by_title(worksheet_pointer)
         if worksheet is None:
-            raise WorksheetNotFoundByTitleError(worksheet_num_or_title)
+            raise WorksheetNotFoundByTitleError(worksheet_pointer)
 
     worksheet_values = worksheet.get_all_values()
 
@@ -245,7 +247,7 @@ class GoogleSpreadsheet(BaseQueryRunner):
 
     def run_query(self, query, user):
         logger.debug("Spreadsheet is about to execute query: %s", query)
-        key, worksheet_num_or_title = parse_query(query)
+        key, worksheet_pointer = parse_query(query)
 
         try:
             spreadsheet_service = self._get_spreadsheet_service()
@@ -255,7 +257,7 @@ class GoogleSpreadsheet(BaseQueryRunner):
             else:
                 spreadsheet = spreadsheet_service.open_by_key(key)
 
-            data = parse_spreadsheet(SpreadsheetWrapper(spreadsheet), worksheet_num_or_title)
+            data = parse_spreadsheet(SpreadsheetWrapper(spreadsheet), worksheet_pointer)
 
             return data, None
         except gspread.SpreadsheetNotFound:
