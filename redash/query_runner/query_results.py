@@ -4,6 +4,7 @@ import hashlib
 import logging
 import re
 import sqlite3
+import os
 from urllib.parse import parse_qs
 
 from redash import models
@@ -16,6 +17,11 @@ from redash.query_runner import (
     register,
 )
 from redash.utils import json_dumps
+
+from redash.settings.helpers import (
+    parse_boolean,
+)
+ 
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +47,8 @@ def extract_cached_query_ids(query):
     queries = re.findall(r"(?:join|from)\s+cached_query_(\d+)", query, re.IGNORECASE)
     return [int(q) for q in queries]
 
+def extract_query_tables(query):
+    return re.findall(r"(?:join|from)\s+query_table_start_({.*?})_query_table_end", query, re.IGNORECASE)
 
 def _load_query(user, query_id):
     query = models.Query.get_by_id(query_id)
@@ -82,7 +90,7 @@ def get_query_results(user, query_id, bring_from_cache, params=None):
     return results
 
 
-def create_tables_from_query_ids(user, connection, query_ids, query_params, cached_query_ids=[]):
+def create_tables_from_query_ids(user, connection, query_ids, query_params, cached_query_ids=[], query_tables=[]):
     for query_id in set(cached_query_ids):
         results = get_query_results(user, query_id, True)
         table_name = "cached_query_{query_id}".format(query_id=query_id)
@@ -99,6 +107,12 @@ def create_tables_from_query_ids(user, connection, query_ids, query_params, cach
     for query_id in set(query_ids):
         results = get_query_results(user, query_id, False)
         table_name = "query_{query_id}".format(query_id=query_id)
+        create_table(connection, table_name, results)
+
+    for query_table in set(query_tables):
+        results = eval(query_table)
+        table_hash = hashlib.md5("query_{hash}".format(hash=query_table).encode()).hexdigest()
+        table_name = "query_table_{param_hash}".format(param_hash=table_hash)
         create_table(connection, table_name, results)
 
 
@@ -152,6 +166,13 @@ def prepare_parameterized_query(query, query_params):
         query = query.replace(key, value)
     return query
 
+def prepare_table_query(query, query_tables):
+    for query_table in query_tables:
+        table_hash = hashlib.md5("query_{hash}".format(hash=query_table).encode()).hexdigest()
+        table_name = "query_table_{param_hash}".format(param_hash=table_hash)
+        key = "query_table_start_{table}_query_table_end".format(table=query_table)
+        query = query.replace(key, table_name)
+    return query
 
 class Results(BaseQueryRunner):
     should_annotate_query = False
@@ -173,12 +194,21 @@ class Results(BaseQueryRunner):
         query_params = extract_query_params(query)
 
         cached_query_ids = extract_cached_query_ids(query)
-        create_tables_from_query_ids(user, connection, query_ids, query_params, cached_query_ids)
+
+        query_tables = []
+        
+        if parse_boolean(os.environ.get("REDASH_QUERY_RESULTS_ALLOW_PYTHON_TABLE_STRING", "false")):
+            query_tables = extract_query_tables(query)
+
+        create_tables_from_query_ids(user, connection, query_ids, query_params, cached_query_ids, query_tables)
 
         cursor = connection.cursor()
 
         if query_params is not None:
             query = prepare_parameterized_query(query, query_params)
+
+        if query_tables is not None:
+            query = prepare_table_query(query, query_tables)
 
         try:
             cursor.execute(query)
