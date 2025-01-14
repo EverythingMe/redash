@@ -59,6 +59,7 @@
     "font-awesome": "^4.7.0",
     "history": "^4.10.1",
     "hoist-non-react-statics": "^3.3.0",
+    "json-bigint": "^1.0.0",
     "markdown": "0.5.0",
     "material-design-iconic-font": "^2.2.0",
     "mousetrap": "^1.6.1",

@@ -1,7 +1,10 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import moment from "moment/moment";
-import numeral from "numeral";
+// numeral is waiting on v3.0.0 to be available on npm
+// https://github.com/adamwdraper/Numeral-js/pull/790
+// @ts-ignore
+import numeral from "./numeral";
 import { isString, isArray, isUndefined, isFinite, isNil, toString } from "lodash";
 import { visualizationsSettings } from "@/visualizations/visualizationsSettings";
 
