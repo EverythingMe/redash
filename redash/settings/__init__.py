@@ -307,6 +307,7 @@ default_query_runners = [
     "redash.query_runner.mssql",
     "redash.query_runner.mssql_odbc",
     "redash.query_runner.memsql_ds",
+    "redash.query_runner.newrelic",
     "redash.query_runner.jql",
     "redash.query_runner.google_analytics",
     "redash.query_runner.axibase_tsd",
