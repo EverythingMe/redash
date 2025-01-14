@@ -110,7 +110,16 @@ def run_query(query, parameters, data_source, query_id, should_apply_auto_limit,
                 "query_id": query_id,
             },
         )
-        return serialize_job(job)
+
+        response = {
+            "data_source_id": data_source.id,
+            "query_id": query_id,
+            "parameters": parameters,
+            "query": query_text 
+        }
+
+        response.update(serialize_job(job))
+        return response
 
 
 def get_download_filename(query_result, query, filetype):
