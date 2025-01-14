@@ -325,6 +325,7 @@ class QueryResource(BaseResource):
         """
         query = get_object_or_404(models.Query.get_by_id_and_org, query_id, self.current_org)
         query_def = request.get_json(force=True)
+        previous_query_user = query.user
 
         require_object_modify_permission(query, self.current_user)
         require_access_to_dropdown_queries(self.current_user, query_def)
@@ -335,7 +336,6 @@ class QueryResource(BaseResource):
             "api_key",
             "visualizations",
             "latest_query_data",
-            "user",
             "last_modified_by",
             "org",
         ]:
@@ -351,6 +351,17 @@ class QueryResource(BaseResource):
             data_source = models.DataSource.get_by_id_and_org(query_def["data_source_id"], self.current_org)
             require_access(data_source, self.current_user, not_view_only)
 
+        if "user" in query_def:
+            require_admin_or_owner(self.current_user.id)
+            new_user = models.User.get_by_id(query_def["user"]["id"])
+            if "data_source_id" in query_def:
+                data_source = models.DataSource.get_by_id_and_org(query_def["data_source_id"], self.current_org)
+                require_access(data_source, new_user, not_view_only)
+            else:
+                data_source = query.data_source
+                require_access(data_source, new_user, not_view_only)
+            query_def["user"] = new_user
+
         query_def["last_modified_by"] = self.current_user
         query_def["changed_by"] = self.current_user
         # SQLAlchemy handles the case where a concurrent transaction beats us
@@ -361,6 +372,9 @@ class QueryResource(BaseResource):
 
         try:
             self.update_model(query, query_def)
+            if "user" in query_def and query_def["user"] != previous_query_user:
+                models.AccessPermission.revoke(query, query_def["user"], "modify")
+                models.AccessPermission.grant(query, "modify", previous_query_user, self.current_user)
             models.db.session.commit()
         except StaleDataError:
             abort(409)

@@ -21,6 +21,7 @@ import useRenameQuery from "../hooks/useRenameQuery";
 import useDuplicateQuery from "../hooks/useDuplicateQuery";
 import useApiKeyDialog from "../hooks/useApiKeyDialog";
 import usePermissionsEditorDialog from "../hooks/usePermissionsEditorDialog";
+import useQueryOwnerEditorDialog from "../hooks/useQueryOwnerEditorDialog";
 
 import "./QueryPageHeader.less";
 
@@ -81,6 +82,7 @@ export default function QueryPageHeader({
   const [isDuplicating, duplicateQuery] = useDuplicateQuery(query);
   const openApiKeyDialog = useApiKeyDialog(query, onChange);
   const openPermissionsEditorDialog = usePermissionsEditorDialog(query);
+  const openQueryOwnerEditorDialog = useQueryOwnerEditorDialog(query, onChange);
 
   const moreActionsMenu = useMemo(
     () =>
@@ -108,6 +110,12 @@ export default function QueryPageHeader({
               !queryFlags.isNew && queryFlags.canEdit && !queryFlags.isArchived && clientConfig.showPermissionsControl,
             title: "Manage Permissions",
             onClick: openPermissionsEditorDialog,
+          },
+          updateQueryOwner: {
+            isAvailable:
+              !queryFlags.isNew && queryFlags.canEdit && !queryFlags.isArchived && clientConfig.showPermissionsControl,
+            title: "Update Query Owner",
+            onClick: openQueryOwnerEditorDialog,
           },
           publish: {
             isAvailable:
@@ -143,6 +151,7 @@ export default function QueryPageHeader({
       publishQuery,
       unpublishQuery,
       openApiKeyDialog,
+      openQueryOwnerEditorDialog,
     ]
   );
 
