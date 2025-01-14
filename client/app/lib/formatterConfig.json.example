@@ -1,0 +1,8 @@
+{
+    "language": "bigquery",
+    "dialect": "bigquery",
+    "tabWidth": 4,
+    "keywordCase": "upper",
+    "dataTypeCase": "upper",
+    "functionCase": "upper"
+}

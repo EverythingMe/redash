@@ -73,7 +73,7 @@
     "react-grid-layout": "^0.18.2",
     "react-resizable": "^1.10.1",
     "react-virtualized": "^9.21.2",
-    "sql-formatter": "git+https://github.com/getredash/sql-formatter.git",
+    "sql-formatter": "^15.0.2",
     "universal-router": "^8.3.0",
     "use-debounce": "^3.1.0",
     "use-media": "^1.4.0"
@@ -97,7 +97,6 @@
     "@types/prop-types": "^15.7.3",
     "@types/react": "^16.14.2",
     "@types/react-dom": "^16.9.10",
-    "@types/sql-formatter": "^2.3.0",
     "@typescript-eslint/eslint-plugin": "^2.10.0",
     "@typescript-eslint/parser": "^2.10.0",
     "atob": "^2.1.2",

@@ -10,6 +10,7 @@
     "noEmit": true,
     // Enable strictest settings like strictNullChecks & noImplicitAny.
     "strict": true,
+    "resolveJsonModule": true,
     // Import non-ES modules as default imports.
     "esModuleInterop": true,
     "jsx": "react",
