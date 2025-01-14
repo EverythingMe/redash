@@ -3,6 +3,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import Button from "antd/lib/button";
+import Input from "antd/lib/input";
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
 import navigateTo from "@/components/ApplicationArea/navigateTo";
 import CardsList from "@/components/cards-list/CardsList";
@@ -17,6 +18,7 @@ import DataSource, { IMG_ROOT } from "@/services/data-source";
 import { policy } from "@/services/policy";
 import recordEvent from "@/services/recordEvent";
 import routes from "@/services/routes";
+import "./DataSourcesList.less";
 
 export function DataSourcesListComponent({ dataSources, onClickCreate }) {
   const items = dataSources.map(dataSource => ({
@@ -44,7 +46,7 @@ export function DataSourcesListComponent({ dataSources, onClickCreate }) {
 
 registerComponent("DataSourcesListComponent", DataSourcesListComponent);
 
-class DataSourcesList extends React.Component {
+export default class DataSourcesList extends React.Component {
   static propTypes = {
     isNewDataSourcePage: PropTypes.bool,
     onError: PropTypes.func,
@@ -58,6 +60,7 @@ class DataSourcesList extends React.Component {
   state = {
     dataSourceTypes: [],
     dataSources: [],
+    displayList:[],
     loading: true,
   };
 
@@ -69,6 +72,7 @@ class DataSourcesList extends React.Component {
         this.setState(
           {
             dataSources: values[0],
+            displayList: values[0],
             dataSourceTypes: values[1],
             loading: false,
           },
@@ -99,7 +103,7 @@ class DataSourcesList extends React.Component {
 
     return DataSource.create(target).then(dataSource => {
       this.setState({ loading: true });
-      DataSource.query().then(dataSources => this.setState({ dataSources, loading: false }));
+      DataSource.query().then(dataSources => this.setState({ dataSources, displayList:dataSources,loading: false }));
       return dataSource;
     });
   };
@@ -127,6 +131,16 @@ class DataSourcesList extends React.Component {
       });
   };
 
+  filterDatasourceList = (filterString, dataSources) => {
+    
+    if(filterString.length){
+      const filtered = dataSources.filter( d =>  d.name.toLowerCase().includes(filterString) )
+      this.setState({  displayList:filtered})
+    }else{
+      this.setState({ dataSources, displayList:dataSources,loading: false })
+    }
+  }
+
   render() {
     const newDataSourceProps = {
       type: "primary",
@@ -137,11 +151,14 @@ class DataSourcesList extends React.Component {
 
     return (
       <div>
-        <div className="m-b-15">
+        <div className="m-b-15 datasources-top-bar">
           <Button {...newDataSourceProps}>
             <i className="fa fa-plus m-r-5" aria-hidden="true" />
             New Data Source
           </Button>
+          <div className="searchbar">
+            <Input  placeholder="Search Datasource Name" onChange={e => this.filterDatasourceList(e.target.value, this.state.dataSources)} />
+          </div>
           <DynamicComponent name="DataSourcesListExtra" />
         </div>
         {this.state.loading ? (
@@ -149,7 +166,7 @@ class DataSourcesList extends React.Component {
         ) : (
           <DynamicComponent
             name="DataSourcesListComponent"
-            dataSources={this.state.dataSources}
+            dataSources={this.state.displayList}
             onClickCreate={this.showCreateSourceDialog}
           />
         )}
@@ -161,7 +178,7 @@ class DataSourcesList extends React.Component {
 const DataSourcesListPage = wrapSettingsTab(
   "DataSources.List",
   {
-    permission: "admin",
+    permission: "list_data_sources",
     title: "Data Sources",
     path: "data_sources",
     order: 1,
