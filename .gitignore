@@ -19,6 +19,8 @@ _build
 .env
 .tool-versions
 
+.ruff_cache
+
 dump.rdb
 
 node_modules

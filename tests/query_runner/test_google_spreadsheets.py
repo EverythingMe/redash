@@ -57,13 +57,13 @@ class TestParseSpreadsheet(TestCase):
 
         spreadsheet.worksheets = MagicMock(return_value=[])
         spreadsheet.get_worksheet_by_index = MagicMock(return_value=None)
-        self.assertRaises(WorksheetNotFoundError, parse_spreadsheet, spreadsheet, 0)
+        self.assertRaises(WorksheetNotFoundError, parse_spreadsheet, spreadsheet, 0, None)
 
     def test_returns_meaningful_error_for_missing_worksheet_by_title(self):
         spreadsheet = MagicMock()
 
         spreadsheet.get_worksheet_by_title = MagicMock(return_value=None)
-        self.assertRaises(WorksheetNotFoundByTitleError, parse_spreadsheet, spreadsheet, "a")
+        self.assertRaises(WorksheetNotFoundByTitleError, parse_spreadsheet, spreadsheet, None, "a")
 
 
 empty_worksheet = []
@@ -111,36 +111,36 @@ class TestParseWorksheet(TestCase):
 class TestParseQuery(TestCase):
     def test_parse_query(self):
         parsed = parse_query("key|0")
-        self.assertEqual(("key", 0), parsed)
+        self.assertEqual(("key", 0, None), parsed)
 
     def test_parse_query_ignored(self):
         parsed = parse_query("key")
-        self.assertEqual(("key", 0), parsed)
+        self.assertEqual(("key", 0, None), parsed)
 
         parsed = parse_query("key|")
-        self.assertEqual(("key", 0), parsed)
+        self.assertEqual(("key", 0, None), parsed)
 
         parsed = parse_query("key|1|")
-        self.assertEqual(("key", 0), parsed)
+        self.assertEqual(("key", 0, None), parsed)
 
     def test_parse_query_title(self):
         parsed = parse_query('key|""')
-        self.assertEqual(("key", ""), parsed)
+        self.assertEqual(("key", None, ""), parsed)
 
         parsed = parse_query('key|"1"')
-        self.assertEqual(("key", "1"), parsed)
+        self.assertEqual(("key", None, "1"), parsed)
 
         parsed = parse_query('key|"abc"')
-        self.assertEqual(("key", "abc"), parsed)
+        self.assertEqual(("key", None, "abc"), parsed)
 
         parsed = parse_query('key|"あ"')
-        self.assertEqual(("key", "あ"), parsed)
+        self.assertEqual(("key", None, "あ"), parsed)
 
         parsed = parse_query('key|"1""')
-        self.assertEqual(("key", '1"'), parsed)
+        self.assertEqual(("key", None, '1"'), parsed)
 
         parsed = parse_query('key|""')
-        self.assertEqual(("key", ""), parsed)
+        self.assertEqual(("key", None, ""), parsed)
 
     def test_parse_query_failed(self):
         self.assertRaises(ValueError, parse_query, "key|0x01")
