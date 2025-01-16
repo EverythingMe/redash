@@ -119,7 +119,14 @@ class CreateSourceDialog extends React.Component {
             </HelpTrigger>
           )}
         </div>
-        <DynamicForm id={this.formId} fields={fields} onSubmit={this.createSource} feedbackIcons hideSubmitButton />
+        <DynamicForm
+          id={this.formId}
+          fields={fields}
+          onSubmit={this.createSource}
+          feedbackIcons
+          hideSubmitButton
+          selectedType={selectedType.type}
+        />
         {selectedType.type === "databricks" && (
           <small>
             By using the Databricks Data Source you agree to the Databricks JDBC/ODBC{" "}

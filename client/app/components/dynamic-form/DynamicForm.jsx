@@ -2,6 +2,7 @@ import React, { useState, useReducer, useCallback } from "react";
 import PropTypes from "prop-types";
 import cx from "classnames";
 import Form from "antd/lib/form";
+import Checkbox from "antd/lib/checkbox";
 import Button from "antd/lib/button";
 import { includes, isFunction, filter, find, difference, isEmpty, mapValues } from "lodash";
 import notification from "@/services/notification";
@@ -46,8 +47,11 @@ function normalizeEmptyValuesToNull(fields, values) {
   });
 }
 
-function DynamicFormFields({ fields, feedbackIcons, form }) {
+function DynamicFormFields({ fields, feedbackIcons, form, useCustomHostPort, isOracle }) {
   return fields.map(field => {
+    if (isOracle && useCustomHostPort && (field.name === "host" || field.name === "port")) {
+      return null;
+    }
     const { name, type, initialValue, contentAfter } = field;
     const fieldLabel = getFieldLabel(field);
 
@@ -149,11 +153,14 @@ export default function DynamicForm({
   defaultShowExtraFields,
   saveText,
   onSubmit,
+  selectedType,
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
+  const [useCustomHostPort, setUseCustomHostPort] = useState(false);
   const [showExtraFields, setShowExtraFields] = useState(defaultShowExtraFields);
   const [form] = Form.useForm();
+  const isOracle = selectedType === "oracle";
   const extraFields = filter(fields, { extra: true });
   const regularFields = difference(fields, extraFields);
 
@@ -184,6 +191,10 @@ export default function DynamicForm({
     [form]
   );
 
+  const handleCheckboxChange = useCallback(e => {
+    setUseCustomHostPort(e.target.checked);
+  }, []);
+
   return (
     <Form
       form={form}
@@ -195,7 +206,20 @@ export default function DynamicForm({
       layout="vertical"
       onFinish={handleFinish}
       onFinishFailed={handleFinishFailed}>
-      <DynamicFormFields fields={regularFields} feedbackIcons={feedbackIcons} form={form} />
+      {isOracle && (
+        <Form.Item name="useCustomHostPort" valuePropName="checked">
+          <Checkbox checked={useCustomHostPort} onChange={handleCheckboxChange}>
+            Use Custom
+          </Checkbox>
+        </Form.Item>
+      )}
+      <DynamicFormFields
+        fields={regularFields}
+        feedbackIcons={feedbackIcons}
+        form={form}
+        useCustomHostPort={useCustomHostPort}
+        isOracle={isOracle}
+      />
       {!isEmpty(extraFields) && (
         <div className="extra-options">
           <Button
