@@ -34,7 +34,7 @@ clean:
 
 clean-all: clean
 	docker image rm --force \
-		redash/redash:10.1.0.b50633 redis:7-alpine maildev/maildev:latest \
+		redash/redash:latest redis:7-alpine maildev/maildev:latest \
 		pgautoupgrade/pgautoupgrade:15-alpine3.8 pgautoupgrade/pgautoupgrade:latest
 
 down:
