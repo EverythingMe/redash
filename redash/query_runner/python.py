@@ -2,6 +2,7 @@ import datetime
 import importlib
 import logging
 import sys
+import traceback
 
 from RestrictedPython import compile_restricted
 from RestrictedPython.Guards import (
@@ -360,7 +361,14 @@ class Python(BaseQueryRunner):
             self.validate_result(data)
             data["log"] = self._custom_print.lines
         except Exception as e:
-            error = str(type(e)) + " " + str(e)
+            _, _, tb = sys.exc_info()
+            frames = traceback.extract_tb(tb)
+            # We want the "deepest" frame that is in the query code (indicated by '<string>')
+            # This is to avoid exceptions raised by modules the query imported.
+            query_frames = [frame for frame in frames if frame.filename == "<string>"]
+            line_number = query_frames[-1].lineno
+
+            error = f'{type(e)} "{e}" (line {line_number})'
             data = None
 
         return data, error
