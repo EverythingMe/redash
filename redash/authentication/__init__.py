@@ -242,6 +242,7 @@ def init_app(app):
     from redash.authentication.google_oauth import (
         create_google_oauth_blueprint,
     )
+    from redash.authentication.oidc import create_oidc_blueprint
 
     login_manager.init_app(app)
     login_manager.anonymous_user = models.AnonymousUser
@@ -257,12 +258,14 @@ def init_app(app):
     # Authlib's flask oauth client requires a Flask app to initialize
     for blueprint in [
         create_google_oauth_blueprint(app),
+        create_oidc_blueprint(app),
         saml_auth.blueprint,
         remote_user_auth.blueprint,
         ldap_auth.blueprint,
     ]:
-        csrf.exempt(blueprint)
-        app.register_blueprint(blueprint)
+        if blueprint:
+            csrf.exempt(blueprint)
+            app.register_blueprint(blueprint)
 
     user_logged_in.connect(log_user_logged_in)
     login_manager.request_loader(request_loader)

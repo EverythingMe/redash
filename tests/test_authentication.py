@@ -17,6 +17,7 @@ from redash.authentication import (
     get_login_url,
     hmac_load_user_from_request,
     jwt_auth,
+    oidc,
     org_settings,
     sign,
 )
@@ -175,6 +176,32 @@ class TestSessionAuthentication(BaseTestCase):
             user=other_user,
         )
         self.assertEqual(rv.status_code, 200)
+
+
+class TestCreateAndLoginUserOIDC(BaseTestCase):
+    def test_logins_valid_user(self):
+        user = self.factory.create_user(email="test@example.com")
+        with patch("redash.authentication.login_user") as login_user_mock:
+            oidc.create_and_login_user(self.factory.org, user.name, user.email)
+            login_user_mock.assert_called_once_with(user, remember=True)
+
+    def test_creates_vaild_new_user(self):
+        email = "test@example.com"
+        name = "Test User"
+
+        with patch("redash.authentication.login_user") as login_user_mock:
+            oidc.create_and_login_user(self.factory.org, name, email)
+
+            self.assertTrue(login_user_mock.called)
+            user = models.User.query.filter(models.User.email == email).one()
+            self.assertEqual(user.email, email)
+
+    def test_updates_user_name(self):
+        user = self.factory.create_user(email="test@example.com")
+
+        with patch("redash.authentication.login_user") as login_user_mock:
+            create_and_login_user(self.factory.org, "New Name", user.email)
+            login_user_mock.assert_called_once_with(user, remember=True)
 
 
 class TestCreateAndLoginUser(BaseTestCase):

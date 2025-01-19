@@ -139,6 +139,11 @@ GOOGLE_CLIENT_ID = os.environ.get("REDASH_GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("REDASH_GOOGLE_CLIENT_SECRET", "")
 GOOGLE_OAUTH_ENABLED = bool(GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET)
 
+OIDC_CLIENT_ID = os.environ.get("REDASH_OIDC_CLIENT_ID", "")
+OIDC_CLIENT_SECRET = os.environ.get("REDASH_OIDC_CLIENT_SECRET", "")
+OIDC_ISSUER_URL = os.environ.get("REDASH_OIDC_ISSUER_URL", "")
+OIDC_ENABLED = bool(OIDC_CLIENT_ID and OIDC_CLIENT_SECRET and OIDC_ISSUER_URL)
+
 # If Redash is behind a proxy it might sometimes receive a X-Forwarded-Proto of HTTP
 # even if your actual Redash URL scheme is HTTPS. This will cause Flask to build
 # the SAML redirect URL incorrect thus failing auth. This is especially common if

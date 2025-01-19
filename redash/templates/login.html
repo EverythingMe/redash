@@ -20,6 +20,13 @@
       </a>
     {% endif %}
 
+    {% if show_oidc_login %}
+      <a href="{{ oidc_auth_url }}" class="login-button btn btn-default btn-block">
+        <img src="/static/images/openid.svg">
+        Login with OIDC
+      </a>
+    {% endif %}
+
     {% if show_saml_login %}
       <a href="{{ url_for('saml_auth.sp_initiated', org_slug=org_slug, next=next) }}" class="login-button btn btn-default btn-block">SAML Login</a>
     {% endif %}

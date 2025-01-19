@@ -6,7 +6,7 @@
 <div class="fixed-width-page">
   <div class="bg-white tiled">
     <div class="m-b-25">
-      {% if show_google_openid or show_saml_login or show_remote_user_login or show_ldap_login %}
+      {% if show_google_openid or show_oidc_login or show_saml_login or show_remote_user_login or show_ldap_login %}
         To create your account, please choose a password or login with your SSO provider.
       {% else %}
         To create your account, please choose a password.
@@ -25,6 +25,13 @@
       <a href="{{ google_auth_url }}" class="login-button btn btn-default btn-block">
         <img src="/static/images/google_logo.svg">
         Login with Google
+      </a>
+    {% endif %}
+
+    {% if show_oidc_login %}
+      <a href="{{ oidc_auth_url }}" class="login-button btn btn-default btn-block">
+        <img src="/static/images/openid.svg">
+        Login with OIDC
       </a>
     {% endif %}
 
