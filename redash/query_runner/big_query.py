@@ -313,6 +313,9 @@ class BigQuery(BaseQueryRunner):
         queries = []
         for dataset in datasets:
             dataset_id = dataset["datasetReference"]["datasetId"]
+            location = dataset["location"]
+            if location != self._get_location():
+                continue
             query = query_base.format(dataset_id=dataset_id)
             queries.append(query)
 
