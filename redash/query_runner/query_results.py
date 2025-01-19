@@ -111,9 +111,12 @@ def flatten(value):
         return json_dumps(value)
     elif isinstance(value, decimal.Decimal):
         return float(value)
-    elif isinstance(value, datetime.timedelta):
+    elif isinstance(value, (datetime.date, datetime.time, datetime.datetime, datetime.timedelta)):
         return str(value)
     else:
+        if logger.isEnabledFor(logging.DEBUG):
+            if not isinstance(value, (type(None), str, float, int, bool)):
+                logger.debug("flatten() found unhandled type: %s", str(type(value)))
         return value
 
 
@@ -136,6 +139,7 @@ def create_table(connection, table_name, query_results):
         column_list=column_list,
         place_holders=",".join(["?"] * len(columns)),
     )
+    logger.debug("INSERT template: %s", insert_template)
 
     for row in query_results["rows"]:
         values = [flatten(row.get(column)) for column in columns]
