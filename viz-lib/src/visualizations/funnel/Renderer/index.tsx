@@ -60,7 +60,7 @@ export default function Renderer({ data, options }: any) {
         align: "center",
         render: (value: any, item: any) => (
           // @ts-expect-error ts-migrate(2745) FIXME: This JSX tag's 'children' prop expects type 'never... Remove this comment to see the full error message
-          <FunnelBar align="center" color={ColorPalette.Cyan} value={item.pctMax}>
+          <FunnelBar align="center" color={options.color} value={item.pctMax}>
             {formatValue(value)}
           </FunnelBar>
         ),
