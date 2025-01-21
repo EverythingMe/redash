@@ -135,6 +135,13 @@ FEATURE_POLICY = os.environ.get("REDASH_FEATURE_POLICY", "")
 
 MULTI_ORG = parse_boolean(os.environ.get("REDASH_MULTI_ORG", "false"))
 
+# If Redash is behind a proxy it might sometimes receive a X-Forwarded-Proto of HTTP
+# even if your actual Redash URL scheme is HTTPS. This will cause Flask to build
+# the OAuth redirect URL incorrectly thus failing auth. This is especially common if
+# you're behind a SSL/TCP configured AWS ELB or similar.
+# This setting will force the URL scheme.
+GOOGLE_OAUTH_SCHEME_OVERRIDE = os.environ.get("REDASH_GOOGLE_OAUTH_SCHEME_OVERRIDE", "")
+
 GOOGLE_CLIENT_ID = os.environ.get("REDASH_GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("REDASH_GOOGLE_CLIENT_SECRET", "")
 GOOGLE_OAUTH_ENABLED = bool(GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET)
