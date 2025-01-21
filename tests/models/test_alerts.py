@@ -1,6 +1,7 @@
 import textwrap
 from unittest import TestCase
 
+from redash import settings
 from redash.models import OPERATORS, Alert, db, next_state
 from tests import BaseTestCase
 
@@ -153,6 +154,10 @@ class TestAlertRenderTemplate(BaseTestCase):
         return alert
 
     def test_render_custom_alert_template(self):
+        old_host = settings.HOST
+        old_multi_org = settings.MULTI_ORG
+        settings.HOST = "http://localhost:5001"
+        settings.MULTI_ORG = False
         alert = self.create_alert(get_results(1))
         custom_alert = """
         <pre>
@@ -176,9 +181,9 @@ class TestAlertRenderTemplate(BaseTestCase):
         ALERT_CONDITION     equals
         ALERT_THRESHOLD     5
         ALERT_NAME          %s
-        ALERT_URL           https:///default/alerts/%d
+        ALERT_URL           http://localhost:5001/alerts/%d
         QUERY_NAME          Query
-        QUERY_URL           https:///default/queries/%d
+        QUERY_URL           http://localhost:5001/queries/%d
         QUERY_RESULT_VALUE  1
         QUERY_RESULT_ROWS   [{'foo': 1}]
         QUERY_RESULT_COLS   [{'name': 'foo', 'type': 'STRING'}]
@@ -190,6 +195,8 @@ class TestAlertRenderTemplate(BaseTestCase):
         )
         result = alert.render_template(textwrap.dedent(custom_alert))
         self.assertMultiLineEqual(result, textwrap.dedent(expected))
+        settings.HOST = old_host
+        settings.MULTI_ORG = old_multi_org
 
     def test_render_custom_alert_template_query_table(self):
         alert = self.create_alert(get_results(1))
