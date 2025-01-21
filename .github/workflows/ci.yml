@@ -162,6 +162,7 @@ jobs:
           set -x
           yarn cypress build
           yarn cypress start -- --skip-db-seed
+          sleep 30
           docker compose run cypress yarn cypress db-seed
       - name: Execute Cypress Tests
         run: yarn cypress run-ci
