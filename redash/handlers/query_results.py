@@ -328,7 +328,11 @@ class QueryResultResource(BaseResource):
                     abort(404, message="No cached result found for this query.")
 
         if query_result:
-            require_access(query_result.data_source, self.current_user, view_only)
+            api_key = request.args.get("api_key")
+            if query and api_key in query.dashboard_api_keys:
+                pass  # shared dashboard
+            else:
+                require_access(query_result.data_source, self.current_user, view_only)
 
             if isinstance(self.current_user, models.ApiUser):
                 event = {

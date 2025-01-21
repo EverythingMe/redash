@@ -27,9 +27,13 @@ function visualizationWidgetMenuOptions({ widget, canEditDashboard, onParameters
   const canEditParameters = canEditDashboard && !isEmpty(invoke(widget, "query.getParametersDefs"));
   const widgetQueryResult = widget.getQueryResult();
   const isQueryResultEmpty = !widgetQueryResult || !widgetQueryResult.isEmpty || widgetQueryResult.isEmpty();
-
-  const downloadLink = fileType => widgetQueryResult.getLink(widget.getQuery().id, fileType);
-  const downloadName = fileType => widgetQueryResult.getName(widget.getQuery().name, fileType);
+  const parts = window.location.pathname.split("/").reverse();
+  var apiKey = null;
+  if (parts.length > 3 && parts[2] === "public" && parts[0].length === 40) {
+    apiKey = parts[0];
+  }
+  const downloadLink = (fileType) => widgetQueryResult.getLink(widget.getQuery().id, fileType, apiKey);
+  const downloadName = (fileType) => widgetQueryResult.getName(widget.getQuery().name, fileType);
   return compact([
     <Menu.Item key="download_csv" disabled={isQueryResultEmpty}>
       {!isQueryResultEmpty ? (
@@ -149,7 +153,7 @@ function VisualizationWidgetFooter({ widget, isPublic, onRefresh, onExpand }) {
   const updatedAt = invoke(widgetQueryResult, "getUpdatedAt");
   const [refreshClickButtonId, setRefreshClickButtonId] = useState();
 
-  const refreshWidget = buttonId => {
+  const refreshWidget = (buttonId) => {
     if (!refreshClickButtonId) {
       setRefreshClickButtonId(buttonId);
       onRefresh().finally(() => setRefreshClickButtonId(null));
@@ -163,7 +167,8 @@ function VisualizationWidgetFooter({ widget, isPublic, onRefresh, onExpand }) {
           <PlainButton
             className="refresh-button hidden-print btn btn-sm btn-default btn-transparent"
             onClick={() => refreshWidget(1)}
-            data-test="RefreshButton">
+            data-test="RefreshButton"
+          >
             <i className={cx("zmdi zmdi-refresh", { "zmdi-hc-spin": refreshClickButtonId === 1 })} aria-hidden="true" />
             <span className="sr-only">
               {refreshClickButtonId === 1 ? "Refreshing, please wait. " : "Press to refresh. "}
@@ -184,7 +189,8 @@ function VisualizationWidgetFooter({ widget, isPublic, onRefresh, onExpand }) {
         {!isPublic && (
           <PlainButton
             className="btn btn-sm btn-default hidden-print btn-transparent btn__refresh"
-            onClick={() => refreshWidget(2)}>
+            onClick={() => refreshWidget(2)}
+          >
             <i className={cx("zmdi zmdi-refresh", { "zmdi-hc-spin": refreshClickButtonId === 2 })} aria-hidden="true" />
             <span className="sr-only">
               {refreshClickButtonId === 2 ? "Refreshing, please wait." : "Press to refresh."}
@@ -250,7 +256,7 @@ class VisualizationWidget extends React.Component {
     onLoad();
   }
 
-  onLocalFiltersChange = localFilters => {
+  onLocalFiltersChange = (localFilters) => {
     this.setState({ localFilters });
   };
 
@@ -263,7 +269,7 @@ class VisualizationWidget extends React.Component {
     EditParameterMappingsDialog.showModal({
       dashboard,
       widget,
-    }).onClose(valuesChanged => {
+    }).onClose((valuesChanged) => {
       // refresh widget if any parameter value has been updated
       if (valuesChanged) {
         onRefresh();
@@ -306,7 +312,8 @@ class VisualizationWidget extends React.Component {
             className="body-row-auto spinner-container"
             role="status"
             aria-live="polite"
-            aria-relevant="additions removals">
+            aria-relevant="additions removals"
+          >
             <div className="spinner">
               <i className="zmdi zmdi-refresh zmdi-hc-spin zmdi-hc-5x" aria-hidden="true" />
               <span className="sr-only">Loading...</span>
@@ -321,7 +328,7 @@ class VisualizationWidget extends React.Component {
     const { localParameters } = this.state;
     const widgetQueryResult = widget.getQueryResult();
     const isRefreshing = isLoading && !!(widgetQueryResult && widgetQueryResult.getStatus());
-    const onParametersEdit = parameters => {
+    const onParametersEdit = (parameters) => {
       const paramOrder = map(parameters, "name");
       widget.options.paramOrder = paramOrder;
       widget.save("options", { paramOrder });
@@ -354,7 +361,8 @@ class VisualizationWidget extends React.Component {
             onExpand={this.expandWidget}
           />
         }
-        tileProps={{ "data-refreshing": isRefreshing }}>
+        tileProps={{ "data-refreshing": isRefreshing }}
+      >
         {this.renderVisualization()}
       </Widget>
     );

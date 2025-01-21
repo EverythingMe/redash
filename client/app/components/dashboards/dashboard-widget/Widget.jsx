@@ -51,7 +51,8 @@ function WidgetDeleteButton({ onClick }) {
         title="Remove From Dashboard"
         onClick={onClick}
         data-test="WidgetDeleteButton"
-        aria-label="Close">
+        aria-label="Close"
+      >
         <i className="zmdi zmdi-close" aria-hidden="true" />
       </PlainButton>
     </div>
@@ -69,7 +70,6 @@ class Widget extends React.Component {
     header: PropTypes.node,
     footer: PropTypes.node,
     canEdit: PropTypes.bool,
-    isPublic: PropTypes.bool,
     refreshStartedAt: Moment,
     menuOptions: PropTypes.node,
     tileProps: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -82,7 +82,6 @@ class Widget extends React.Component {
     header: null,
     footer: null,
     canEdit: false,
-    isPublic: false,
     refreshStartedAt: null,
     menuOptions: null,
     tileProps: {},
@@ -109,8 +108,8 @@ class Widget extends React.Component {
   };
 
   render() {
-    const { className, children, header, footer, canEdit, isPublic, menuOptions, tileProps } = this.props;
-    const showDropdownButton = !isPublic && (canEdit || !isEmpty(menuOptions));
+    const { className, children, header, footer, canEdit, menuOptions, tileProps } = this.props;
+    const showDropdownButton = canEdit || !isEmpty(menuOptions);
     return (
       <div className="widget-wrapper">
         <div className={cx("tile body-container", className)} {...tileProps}>

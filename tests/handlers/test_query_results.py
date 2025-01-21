@@ -294,6 +294,36 @@ class TestQueryResultAPI(BaseTestCase):
         )
         self.assertEqual(rv.status_code, 200)
 
+    def test_access_query_using_dashboard_api_key(self):
+        query = self.factory.create_query()
+        query_result = self.factory.create_query_result(query_text=query.query_text)
+
+        dashboard1 = self.factory.create_dashboard()
+        visualization1 = self.factory.create_visualization(query_rel=query)
+        self.factory.create_widget(visualization=visualization1, dashboard=dashboard1)
+        api_key = self.factory.create_api_key(object=dashboard1).api_key
+
+        rv = self.make_request(
+            "get",
+            "/api/queries/{}/results/{}.json?api_key={}".format(query.id, query_result.id, api_key),
+            user=False,
+        )
+        self.assertEqual(rv.status_code, 200)
+
+    def test_reject_query_using_unrelated_dashboard_api_key(self):
+        query = self.factory.create_query()
+        query_result = self.factory.create_query_result(query_text=query.query_text)
+
+        dashboard1 = self.factory.create_dashboard()
+        api_key = self.factory.create_api_key(object=dashboard1).api_key
+
+        rv = self.make_request(
+            "get",
+            "/api/queries/{}/results/{}.json?api_key={}".format(query.id, query_result.id, api_key),
+            user=False,
+        )
+        self.assertEqual(rv.status_code, 403)
+
     def test_access_with_query_api_key_without_query_result_id(self):
         ds = self.factory.create_data_source(group=self.factory.org.default_group, view_only=False)
         query = self.factory.create_query()
