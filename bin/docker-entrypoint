@@ -42,6 +42,10 @@ dev_worker() {
 }
 
 server() {
+  echo "Upgrading database..."
+
+  /app/manage.py db upgrade
+
   # Recycle gunicorn workers every n-th request. See http://docs.gunicorn.org/en/stable/settings.html#max-requests for more details.
   MAX_REQUESTS=${MAX_REQUESTS:-1000}
   MAX_REQUESTS_JITTER=${MAX_REQUESTS_JITTER:-100}

@@ -47,9 +47,10 @@ function buildServer() {
 }
 
 function startServer() {
+  console.log("Creating the database...");
+  execSync("docker compose -p cypress run server create_db", { stdio: "inherit" });
   console.log("Starting the server...");
   execSync("docker compose -p cypress up -d", { stdio: "inherit" });
-  execSync("docker compose -p cypress run server create_db", { stdio: "inherit" });
 }
 
 function stopServer() {
