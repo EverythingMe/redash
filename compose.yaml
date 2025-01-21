@@ -52,6 +52,8 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    ports:
+      - "6379:6379"
   postgres:
     image: pgautoupgrade/pgautoupgrade:latest
     ports:
@@ -69,3 +71,12 @@ services:
       - "1080:1080"
       - "1025:1025"
     restart: unless-stopped
+  dashboard:
+    image: eoranged/rq-dashboard:latest
+    ports:
+      - "9181:9181"
+    restart: unless-stopped
+    environment:
+      RQ_DASHBOARD_REDIS_URL: "redis://redis:6379"
+      RQ_DASHBOARD_USERNAME: "rq"
+      RQ_DASHBOARD_PASSWORD: "password"
