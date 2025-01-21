@@ -58,7 +58,28 @@ class DataSourceTest(BaseTestCase):
             {"name": "zoo", "columns": ["is_cow", "is_snake", "is_zebra"]},
         ]
 
-        real_output = self.factory.data_source._sort_schema(input_data)
+        real_output = self.factory.data_source._sort_schema(input_data, sort_columns=True)
+
+        self.assertEqual(real_output, expected_output)
+
+    def test_schema_sorter_columns_unsorted(self):
+        input_data = [
+            {"name": "zoo", "columns": ["is_zebra", "is_snake", "is_cow"]},
+            {
+                "name": "all_terain_vehicle",
+                "columns": ["has_wheels", "has_engine", "has_all_wheel_drive"],
+            },
+        ]
+
+        expected_output = [
+            {
+                "name": "all_terain_vehicle",
+                "columns": ["has_wheels", "has_engine", "has_all_wheel_drive"],
+            },
+            {"name": "zoo", "columns": ["is_zebra", "is_snake", "is_cow"]},
+        ]
+
+        real_output = self.factory.data_source._sort_schema(input_data, sort_columns=False)
 
         self.assertEqual(real_output, expected_output)
 

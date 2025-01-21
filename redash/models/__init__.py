@@ -216,7 +216,7 @@ class DataSource(BelongsToOrgMixin, db.Model):
             schema = query_runner.get_schema(get_stats=refresh)
 
             try:
-                out_schema = self._sort_schema(schema)
+                out_schema = self._sort_schema(schema, settings.SCHEMAS_SORT_COLUMNS)
             except Exception:
                 logging.exception("Error sorting schema columns for data_source {}".format(self.id))
                 out_schema = schema
@@ -226,11 +226,17 @@ class DataSource(BelongsToOrgMixin, db.Model):
 
         return out_schema
 
-    def _sort_schema(self, schema):
-        return [
-            {"name": i["name"], "columns": sorted(i["columns"], key=lambda x: x["name"] if isinstance(x, dict) else x)}
-            for i in sorted(schema, key=lambda x: x["name"])
-        ]
+    def _sort_schema(self, schema, sort_columns=True):
+        if sort_columns:
+            return [
+                {
+                    "name": i["name"],
+                    "columns": sorted(i["columns"], key=lambda x: x["name"] if isinstance(x, dict) else x),
+                }
+                for i in sorted(schema, key=lambda x: x["name"])
+            ]
+        else:
+            return sorted(schema, key=lambda x: x["name"])
 
     @property
     def _schema_key(self):
