@@ -217,17 +217,10 @@ class QueryExecutor:
 
         run_time = time.time() - started_at
 
-        logger.info(
-            "job=execute_query query_hash=%s ds_id=%d data_length=%s error=[%s]",
-            self.query_hash,
-            self.data_source_id,
-            data and _get_size_iterative(data),
-            error,
-        )
-
         _unlock(self.query_hash, self.data_source.id)
 
         if error is not None and data is None:
+            self._log_progress("error", error=error)
             result = QueryExecutionError(error)
             if self.is_scheduled_query:
                 self.query_model = models.db.session.merge(self.query_model, load=False)
@@ -256,7 +249,11 @@ class QueryExecutor:
             self._log_progress("checking_alerts")
             for query_id in updated_query_ids:
                 check_alerts_for_query.delay(query_id, self.metadata)
-            self._log_progress("finished")
+            self._log_progress(
+                "finished",
+                data_length=_get_size_iterative(data),
+                run_time=run_time,
+            )
 
             result = query_result.id
             models.db.session.commit()
@@ -269,18 +266,23 @@ class QueryExecutor:
 
         return query_runner.annotate_query(self.query, self.metadata)
 
-    def _log_progress(self, state):
+    def _log_progress(self, state, data_length=0, run_time=0, error=None):
         logger.info(
-            "job=execute_query state=%s query_hash=%s type=%s ds_id=%d "
-            "job_id=%s queue=%s query_id=%s username=%s",  # fmt: skip
+            "job=execute_query state=%s query_hash=%s type=%s ds_id=%d ds_name"
+            "=%s data_length=%s job_id=%s queue=%s query_id=%s username=%s "
+            "query_runtime=%.2f error=[%s]",  # fmt: skip
             state,
             self.query_hash,
             self.data_source.type,
             self.data_source.id,
+            self.data_source.name,
+            data_length,
             self.job.id,
             self.metadata.get("Queue", "unknown"),
             self.metadata.get("query_id", "unknown"),
             self.metadata.get("Username", "unknown"),
+            run_time,
+            error,
         )
 
     def _load_data_source(self):
