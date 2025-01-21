@@ -99,10 +99,13 @@ class ClickHouse(BaseSQLQueryRunner):
         timeout = self.configuration.get("timeout", 30)
 
         params = {
-            "user": self.configuration.get("user", "default"),
-            "password": self.configuration.get("password", ""),
             "database": self.configuration["dbname"],
             "default_format": "JSON",
+        }
+
+        headers = {
+            "x-clickhouse-user": self.configuration.get("user", "default"),
+            "x-clickhouse-key": self.configuration.get("password", ""),
         }
 
         if session_id:
@@ -119,6 +122,7 @@ class ClickHouse(BaseSQLQueryRunner):
                 timeout=timeout,
                 params=params,
                 verify=verify,
+                headers=headers,
             )
 
             if not r.ok:
