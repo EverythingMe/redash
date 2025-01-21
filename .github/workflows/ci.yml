@@ -4,16 +4,18 @@ on:
     branches:
       - master
   pull_request_target:
+    types: [labeled]
     branches:
       - master
 env:
   NODE_VERSION: 18
   YARN_VERSION: 1.22.22
+permissions: {}
 jobs:
   backend-lint:
     runs-on: ubuntu-22.04
     steps:
-      - if: github.event.pull_request.mergeable == 'false'
+      - if: github.event.pull_request.mergeable == 'false' || !contains(github.event.pull_request.labels.*.name, 'run tests')
         name: Exit if PR is not mergeable
         run: exit 1
       - uses: actions/checkout@v4
@@ -78,7 +80,7 @@ jobs:
   frontend-lint:
     runs-on: ubuntu-22.04
     steps:
-      - if: github.event.pull_request.mergeable == 'false'
+      - if: github.event.pull_request.mergeable == 'false' || !contains(github.event.pull_request.labels.*.name, 'run tests')
         name: Exit if PR is not mergeable
         run: exit 1
       - uses: actions/checkout@v4
